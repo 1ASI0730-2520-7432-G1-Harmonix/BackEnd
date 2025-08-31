@@ -1,3 +1,5 @@
+using com.split.backend.Shared.Interfaces.ASP.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

@@ -2,7 +2,7 @@
 
 namespace com.split.backend.Shared.Domain.Repositories;
 
-public interface IBaseRepository
+public interface IBaseRepository<TEntity>
 {
     /// <summary>
     /// Add an entity to the repository
@@ -23,7 +23,7 @@ public interface IBaseRepository
     /// <returns>
     ///  The entity if found, otherwise null
     /// </returns>
-    Task<TEntity> FindByIdAsync(int id);
+    Task<TEntity?> FindByIdAsync(int id);
     
     
     /// <summary>
@@ -33,15 +33,15 @@ public interface IBaseRepository
     /// To entity that is meant to be updated
     /// </param>
     void Update(TEntity entity);
-    
-    
+
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="entity"></param>
-    void Remove(TEntity entity)
-    
-    
     void Remove(TEntity entity);
-
+    
+    
+    
+    Task<IEnumerable<TEntity>> ListAsync();
 }

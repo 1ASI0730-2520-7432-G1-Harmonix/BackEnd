@@ -47,13 +47,34 @@
     
     
     <ItemGroup>
-      <Folder Include="Bills\" />
-      <Folder Include="Contributions\" />
-      <Folder Include="HouseholdMembers\" />
-      <Folder Include="Households\" />
-      <Folder Include="IAM\" />
-      <Folder Include="MemberContributions\" />
-      <Folder Include="Settings\" />
+      <Folder Include="Bills\Application\" />
+      <Folder Include="Bills\Domain\" />
+      <Folder Include="Bills\Infrastructure\" />
+      <Folder Include="Bills\Interface\" />
+      <Folder Include="Contributions\Application\" />
+      <Folder Include="Contributions\Domain\" />
+      <Folder Include="Contributions\Infrastructure\" />
+      <Folder Include="Contributions\Interface\" />
+      <Folder Include="HouseholdMembers\Application\" />
+      <Folder Include="HouseholdMembers\Domain\" />
+      <Folder Include="HouseholdMembers\Infrastructure\" />
+      <Folder Include="HouseholdMembers\Interface\" />
+      <Folder Include="Households\Application\" />
+      <Folder Include="Households\Domain\" />
+      <Folder Include="Households\Infrastructure\" />
+      <Folder Include="Households\Interface\" />
+      <Folder Include="IAM\Application\" />
+      <Folder Include="IAM\Domain\Model\" />
+      <Folder Include="IAM\Infrastructure\" />
+      <Folder Include="IAM\Interface\" />
+      <Folder Include="MemberContributions\Application\" />
+      <Folder Include="MemberContributions\Domain\" />
+      <Folder Include="MemberContributions\Infrastructure\" />
+      <Folder Include="MemberContributions\Interface\" />
+      <Folder Include="Settings\Application\" />
+      <Folder Include="Settings\Domain\" />
+      <Folder Include="Settings\Infrastructure\" />
+      <Folder Include="Settings\Interface\" />
       <Folder Include="Shared\Application\" />
     </ItemGroup>
 
