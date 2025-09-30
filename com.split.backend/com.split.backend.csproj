@@ -60,7 +60,6 @@
       <Folder Include="HouseholdMembers\Infrastructure\" />
       <Folder Include="HouseholdMembers\Interface\" />
       <Folder Include="Households\Application\" />
-      <Folder Include="Households\Domain\" />
       <Folder Include="Households\Infrastructure\" />
       <Folder Include="Households\Interface\" />
       <Folder Include="IAM\Application\" />
