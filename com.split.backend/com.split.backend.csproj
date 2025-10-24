@@ -71,7 +71,6 @@
       <Folder Include="MemberContributions\Infrastructure\" />
       <Folder Include="MemberContributions\Interface\" />
       <Folder Include="Settings\Application\" />
-      <Folder Include="Settings\Domain\" />
       <Folder Include="Settings\Infrastructure\" />
       <Folder Include="Settings\Interface\" />
       <Folder Include="Shared\Application\" />
