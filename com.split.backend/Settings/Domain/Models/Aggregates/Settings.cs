@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using com.split.backend.Shared.Domain.Models.Aggregates;
 
 namespace com.split.backend.Settings.Domain.Models.Aggregates;
 
