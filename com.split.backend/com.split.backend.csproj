@@ -60,11 +60,9 @@
       <Folder Include="HouseholdMembers\Infrastructure\" />
       <Folder Include="HouseholdMembers\Interface\" />
       <Folder Include="Households\Application\" />
+      <Folder Include="Households\Domain\Models\ValueObjects\" />
       <Folder Include="Households\Infrastructure\" />
       <Folder Include="Households\Interface\" />
-      <Folder Include="IAM\Application\" />
-      <Folder Include="IAM\Domain\Model\" />
-      <Folder Include="IAM\Infrastructure\" />
       <Folder Include="IAM\Interface\" />
       <Folder Include="MemberContributions\Application\" />
       <Folder Include="MemberContributions\Domain\" />
