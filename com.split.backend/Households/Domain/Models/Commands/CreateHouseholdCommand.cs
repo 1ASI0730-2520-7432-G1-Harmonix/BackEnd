@@ -9,5 +9,4 @@ public record CreateHouseholdCommand(
     string Description,
     string Currency,
     long RepresentativeId
-)
-};
+) ;

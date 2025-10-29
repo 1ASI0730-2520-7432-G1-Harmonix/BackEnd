@@ -7,7 +7,7 @@ namespace com.split.backend.IAM.Domain.Model.Aggregates;
 public partial class User
 {
     [Column("Id")]
-    public Guid Id {  get; set; }
+    public int Id {  get; set; }
     [Column("Email")]
     public EmailAddress Email { get; set; } = new EmailAddress();
     [Column("Address")]
