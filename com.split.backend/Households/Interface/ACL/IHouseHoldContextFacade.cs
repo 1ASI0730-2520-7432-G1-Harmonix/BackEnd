@@ -1,7 +1,8 @@
 ﻿namespace com.split.backend.Households.Interface.ACL;
 
-public class IHouseHoldContextFacade
+public interface IHouseHoldContextFacade
 {
-    Task<int> CreateHouseHold()
+    Task<string> CreateHouseHold();
     
+    Task<string> FetchHouseHoldById(string householdId);
 }

@@ -9,9 +9,20 @@ public static class ModelBuilderExtensions
     {
         builder.Entity<User>().HasKey(u => u.Id);
         builder.Entity<User>().Property(u => u.Id).ValueGeneratedOnAdd();
-        builder.Entity<User>().Property(u => u.Email).IsRequired();
+        builder.Entity<User>().OwnsOne(p => p.Email,
+            n =>
+            {
+                n.WithOwner().HasForeignKey("Id");
+                n.Property(p => p.Address).HasColumnName("EmailAddress");
+            });
         builder.Entity<User>().Property(u => u.Password).IsRequired();
-        builder.Entity<User>().Property(u => u.PersonName);
+        builder.Entity<User>().OwnsOne(p => p.PersonName,
+            n =>
+            {
+                n.WithOwner().HasForeignKey("Id");
+                n.Property(p => p.FirstName).HasColumnName("FirstName");
+                n.Property(p => p.LastName).HasColumnName("LastName");
+            });
         builder.Entity<User>().Property(u => u.HouseholdId).IsRequired();
     }
 }

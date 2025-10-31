@@ -59,8 +59,6 @@
       <Folder Include="HouseholdMembers\Domain\" />
       <Folder Include="HouseholdMembers\Infrastructure\" />
       <Folder Include="HouseholdMembers\Interface\" />
-      <Folder Include="Households\Application\" />
-      <Folder Include="Households\Domain\Models\ValueObjects\" />
       <Folder Include="Households\Infrastructure\" />
       <Folder Include="MemberContributions\Application\" />
       <Folder Include="MemberContributions\Domain\" />

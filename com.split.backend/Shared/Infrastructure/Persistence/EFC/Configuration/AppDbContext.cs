@@ -1,4 +1,5 @@
-﻿using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
+﻿using com.split.backend.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         base.OnModelCreating(builder);
         
         //ApplyContexts
+        //IAM Context
+        builder.ApplyIamConfiguration();
         
         
         //General Naming Convention for the db objects

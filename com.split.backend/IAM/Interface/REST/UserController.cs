@@ -6,7 +6,7 @@ using com.split.backend.IAM.Interface.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace com.split.backend.IAM.Interface;
+namespace com.split.backend.IAM.Interface.REST;
 
 [Authorize]
 [ApiController]

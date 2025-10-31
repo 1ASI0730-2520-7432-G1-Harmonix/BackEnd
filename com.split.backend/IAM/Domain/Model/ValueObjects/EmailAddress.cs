@@ -2,7 +2,7 @@
 
 public record EmailAddress
 {
-    private string Address { get; set; }
+    public string Address { get; set; }
 
     public EmailAddress(): this(string.Empty){}
     public EmailAddress(string address)

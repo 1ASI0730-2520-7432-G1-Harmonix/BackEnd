@@ -7,6 +7,7 @@ namespace com.split.backend.IAM.Infrastructure.Pipeline.MiddleWare.Components;
 
 public class RequestAuthorizationMiddleware(RequestDelegate next)
 {
+    
     public async Task InvokeAsync(
         HttpContext context,
         IUserQueryService userQueryService,
@@ -14,17 +15,24 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
     )
     {
         Console.WriteLine("Entering InvokeAsync");
-        var allowAnonymous = context.Request.HttpContext.GetEndpoint()!.Metadata
-            .Any(m => m.GetType() == typeof(AllowAnonymousAttribute));
+        var endpoint = context.GetEndpoint();
+        var allowAnonymous = endpoint?.Metadata
+            .Any(m => m.GetType() == typeof(AllowAnonymousAttribute)) ?? false;
+        var path = context.Request.Path.Value?.ToLower();
 
-        if (allowAnonymous)
+        if (allowAnonymous || 
+            path.Contains("swagger") ||
+            path.Contains("api-docs") ||
+            path.Contains("health") ||
+            path.Contains("index.html"))
         {
             Console.WriteLine("Skipping authorization - Middleware");
             await next(context);
             return;
         }
         Console.WriteLine("Entering Authorization");
-        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split("").Last();
+        var token = context.Request.Headers["Authorization"]
+            .FirstOrDefault()?.Split(" ").Last();
 
         if (token == null) throw new Exception("Null or invalid token");
 

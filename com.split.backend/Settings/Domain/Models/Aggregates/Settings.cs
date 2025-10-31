@@ -5,20 +5,27 @@ namespace com.split.backend.Settings.Domain.Models.Aggregates;
 public partial class Settings
 {
     [Column("Id")]
-    private string Id { get; set; }
+    public string Id { get; set; }
     [Column("UserId")]
-    private long UserId { get; set; }
+    public long UserId { get; set; }
     [Column("Language")]
-    private string Language { get; set; }
+    public string Language { get; set; }
     [Column("DarkMode")]
-    private bool DarkMode { get; set; }
-    
+    public bool DarkMode { get; set; }
     [Column("NotificationEnabled")]
-    private bool NotificationEnabled { get; set; }
+    public bool NotificationEnabled { get; set; }
 
+    public Settings()
+    {
+        this.Id = String.Empty;
+        this.UserId = 0;
+        this.Language = String.Empty;
+        this.DarkMode = false;
+        this.NotificationEnabled = false;
+    }
     public Settings(string id, long userId, string language, bool darkMode, bool notificationEnabled)
     {
-        this.Id = id;
+        this.Id = "ST" + DateTime.Now.Ticks;
         this.UserId = userId;
         this.Language = language;
         this.DarkMode = darkMode;
