@@ -20,6 +20,7 @@ using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repos
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

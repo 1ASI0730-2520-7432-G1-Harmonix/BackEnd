@@ -42,4 +42,29 @@ public class UserCommandService(
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<User?> Handle(UpdateUserCommand command)
+    {
+        var user = await userRepository.FindByEmailAsync(command.EmailAddress);
+        if (user == null) return null;
+
+        user.UpdateUsername(command.Username);
+        
+        userRepository.Update(user);
+        
+        await unitOfWork.CompleteAsync();
+
+        return user;
+    }
+
+    public async Task<bool> Handle(DeleteUserCommand command)
+    {
+        var user = await userRepository.FindByEmailAsync(command.EmailAddress);
+        if(user == null) return false;
+        
+        userRepository.Remove(user);
+        await unitOfWork.CompleteAsync();
+
+        return true;
+    }
 }

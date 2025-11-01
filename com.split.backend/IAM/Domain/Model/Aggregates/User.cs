@@ -48,5 +48,17 @@ public partial class User
         this.PersonName = new PersonName(command.Name);
         this.HouseholdId = "HH" + DateTime.Now.Ticks;
     }
+
+    public User UpdateUsername(string username)
+    {
+        this.PersonName = new PersonName(username);
+        return this;
+    }
+
+    public User UpdatePassword(string password)
+    {
+        this.Password = password;
+        return this;
+    }
     
 }
