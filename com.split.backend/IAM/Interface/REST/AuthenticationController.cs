@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using com.split.backend.IAM.Domain.Services;
+using com.split.backend.IAM.Infrastructure.Pipeline.MiddleWare.Attributes;
 using com.split.backend.IAM.Interface.REST.Resources;
 using com.split.backend.IAM.Interface.REST.Transform;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

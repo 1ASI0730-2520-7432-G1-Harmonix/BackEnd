@@ -2,6 +2,7 @@
 using System.Reflection.Metadata;
 using com.split.backend.Households.Domain.Models.ValueObjects;
 using com.split.backend.IAM.Domain.Model.Commands;
+using com.split.backend.IAM.Domain.Model.ValueObjects;
 
 namespace com.split.backend.IAM.Domain.Model.Aggregates;
 
@@ -9,9 +10,7 @@ public partial class User
 {
     [Column("Id")]
     public int Id {  get; set; }
-    [Column("Email")]
     public EmailAddress Email { get; set; } = new EmailAddress();
-    [Column("Address")]
     public PersonName PersonName { get; set; } = new PersonName();
     [Column("Password")]
     public string Password { get; set; } 

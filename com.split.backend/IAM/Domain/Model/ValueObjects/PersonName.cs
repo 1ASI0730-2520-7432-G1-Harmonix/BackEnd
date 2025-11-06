@@ -1,9 +1,28 @@
-﻿namespace com.split.backend.Households.Domain.Models.ValueObjects;
+﻿using com.split.backend.IAM.Domain.Model.Aggregates;
 
-public record PersonName(string FirstName, string LastName)
+namespace com.split.backend.IAM.Domain.Model.ValueObjects;
+
+public class PersonName
 {
-    public PersonName() : this(string.Empty, string.Empty){}
+    public Guid Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
 
-    public PersonName(string firstName) : this(firstName, string.Empty) { }
+    public PersonName()
+    {
+        Id = Guid.NewGuid();
+        FirstName = String.Empty;
+        LastName =String.Empty;;
+    }
+
+    public PersonName(string firstName)
+    {
+        FirstName = firstName;
+        LastName = String.Empty;
+    }
     public string FullName => $"{FirstName} {LastName}";
+    
+    
+    public int UserId { get; private set; }
+    public User User { get; private set; }
 }

@@ -7,6 +7,10 @@ public class UserResourceFromEntityAssembler
 {
     public static UserResource ToResourceFromEntity(User entity)
     {
-        return new UserResource(entity.Id, entity.Email.ToString());
+        return new UserResource(entity.Id,
+            entity.Email.Address,
+            entity.PersonName.FirstName.ToString(),
+            entity.HouseholdId.ToString(),
+                entity.Role.ToString());
     }
 }

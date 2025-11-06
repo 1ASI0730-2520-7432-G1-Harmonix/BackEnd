@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
+using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Add Cors Policy
 
@@ -38,13 +38,27 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+
+SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
+sqliteConnection.Open();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 if(connectionString == null) throw new InvalidOperationException("Connection string not found.");
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (builder.Environment.IsDevelopment())
+    if (builder.Environment.IsProduction())
+    {
         options.UseNpgsql(connectionString)
             .LogTo(Console.WriteLine, LogLevel.Information);
+    }
+    else if (builder.Environment.IsDevelopment())
+    {
+        options.UseSqlite(sqliteConnection)
+            .LogTo(Console.WriteLine, LogLevel.Information);
+    }
 });
 
 //Learn more about configuring Swagger/OpenApi at https://aka.ms/aspnetcore/swashbuckle
@@ -133,7 +147,10 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
 
-    context.Database.Migrate();
+    if (app.Environment.IsDevelopment())
+        context.Database.EnsureDeleted();
+    
+    context.Database.EnsureCreated();
 }
 
 //Configure the HTTP request pipeline
