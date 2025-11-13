@@ -65,10 +65,9 @@
       <Folder Include="HouseholdMembers\Domain\" />
       <Folder Include="HouseholdMembers\Infrastructure\" />
       <Folder Include="HouseholdMembers\Interface\" />
+      <Folder Include="Households\Application\OurboundServices\" />
       <Folder Include="MemberContributions\Application\" />
-      <Folder Include="MemberContributions\Domain\" />
-      <Folder Include="MemberContributions\Infrastructure\" />
-      <Folder Include="MemberContributions\Interface\" />
+      <Folder Include="Resources\" />
       <Folder Include="Settings\Application\" />
       <Folder Include="Settings\Infrastructure\" />
       <Folder Include="Settings\Interface\" />

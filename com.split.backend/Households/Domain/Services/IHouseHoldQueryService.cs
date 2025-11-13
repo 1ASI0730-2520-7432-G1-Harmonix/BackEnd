@@ -5,9 +5,9 @@ namespace com.split.backend.Households.Domain.Services;
 
 public interface IHouseHoldQueryService
 {
-    Task<HouseHold?> Handle(GetAllHouseHoldsQuery query);
+    Task<IEnumerable<HouseHold?>> Handle(GetAllHouseHoldsQuery query);
 
-    Task<IEnumerable<HouseHold>> Handle(GetHouseHoldsByRepresentativeId query);
+    Task<IEnumerable<HouseHold?>> Handle(GetHouseHoldsByRepresentativeId query);
     
     Task<HouseHold?> Handle(GetHouseHoldByIdQuery query);
 }
