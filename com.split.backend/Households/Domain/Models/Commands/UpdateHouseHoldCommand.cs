@@ -1,6 +1,3 @@
 ﻿namespace com.split.backend.Households.Domain.Models.Commands;
 
-public class UpdateHouseHoldCommand
-{
-    
-}
+public record UpdateHouseHoldCommand(string Id, string Name, long RepresentativeId, string Currency);
