@@ -7,9 +7,10 @@ namespace com.split.backend.Households.Interface.REST.Transform;
 
 public static class HouseholdResourceFromEntityAssembler
 {
-    public static CreateHouseholdCommand ToResourceFromEntity(HouseHold entity)
+    public static HouseHoldResource ToResourceFromEntity(HouseHold entity)
     {
-        return new CreateHouseholdCommand(
+        return new HouseHoldResource(
+            entity.Id,
             entity.Name,
             entity.RepresentativeId,
             ((int)entity.Currency).ToString());
