@@ -1,3 +1,8 @@
+using com.split.backend.Households.Application.CommandServices;
+using com.split.backend.Households.Application.QueryServices;
+using com.split.backend.Households.Domain.Repositories;
+using com.split.backend.Households.Domain.Services;
+using com.split.backend.Households.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.IAM.Application.Internal.CommandServices;
 using com.split.backend.IAM.Application.Internal.OutboundServices;
 using com.split.backend.IAM.Application.Internal.QueryServices;
@@ -119,6 +124,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 
+// HouseHold Bounded Context Injection Configuration
+
+builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
+builder.Services.AddScoped<IHouseHoldCommandService, HouseHoldCommandService>();
+builder.Services.AddScoped<IHouseHoldQueryService, HouseHoldQueryService>();
+
+
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
@@ -141,7 +153,7 @@ builder.Services.AddCortexMediator(
 
 var app = builder.Build();
 
-// Verify if the database exists and create it if it doesnt 
+// Verify if the database exists and create it if it doesn't 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

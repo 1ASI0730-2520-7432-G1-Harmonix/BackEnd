@@ -53,7 +53,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var command = new UpdateUserCommand(
-            resource.EmailAddress,
+            emailAddress,
             resource.PersonName,
             resource.Password
         );

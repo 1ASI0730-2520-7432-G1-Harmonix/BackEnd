@@ -24,8 +24,8 @@ public partial class MemberContribution
         MemberId = String.Empty;
         Amount = 0;
         Status = EStatus.Pending;
-        PayedAt = DateTime.Now;
-    }
+        PayedAt = DateTime.Parse("0001-01-01 00:00:00");
+   }
 
     public MemberContribution(string contributionId,
         string memberId, decimal amount, int status)
@@ -36,7 +36,8 @@ public partial class MemberContribution
         ContributionSoFar = 0;
         Amount = amount;
         Status= (EStatus)status;
-        
+        PayedAt = DateTime.Parse("0001-01-01 00:00:00");
+ 
     }
 
     public MemberContribution(CreateMemberContributionCommand command)
@@ -47,6 +48,7 @@ public partial class MemberContribution
         ContributionSoFar = 0;
         Amount = command.Amount;
         Status = EStatus.Pending;
+        PayedAt = DateTime.Parse("0001-01-01 00:00:00");
     }
 
     public MemberContribution UpdateAmount(UpdateMemberContributionAmountCommand command)
@@ -55,7 +57,11 @@ public partial class MemberContribution
             throw new ArgumentException("The amount contributed cannot be greater than the total amount to be contributed");
         
         ContributionSoFar += command.Amount;
-        if(ContributionSoFar == command.Amount) PayedAt = DateTime.Now;
+        if (ContributionSoFar == command.Amount)
+        {
+            PayedAt = DateTime.Now;
+            Status = EStatus.Done;
+        }
         return this;
     }
 }

@@ -1,6 +1,3 @@
 ﻿namespace com.split.backend.MemberContributions.Interface.REST.Resources;
 
-public class CreateMemberContributionResource
-{
-    
-}
+public record CreateMemberContributionResource(string ContributionId, string MemberId, decimal Amount);
