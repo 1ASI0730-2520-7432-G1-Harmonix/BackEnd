@@ -1,4 +1,5 @@
-﻿using com.split.backend.Households.Infrastructure.Persistence.EFC.Configuration.Extensions;
+﻿using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Households.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
@@ -22,6 +23,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         //IAM Context
         builder.ApplyIamConfiguration();
         builder.ApplyHouseHoldConfiguration();
+        
+        //Bills
+        builder.ApplyBillsConfiguration();
         
         
         //General Naming Convention for the db objects
