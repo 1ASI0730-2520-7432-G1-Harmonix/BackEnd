@@ -1,3 +1,8 @@
+using com.split.backend.Bills.Application.Internal.CommandServices;
+using com.split.backend.Bills.Application.Internal.QueryServices;
+using com.split.backend.Bills.Domain.Repositories;
+using com.split.backend.Bills.Domain.Services;
+using com.split.backend.Bills.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.IAM.Application.Internal.CommandServices;
 using com.split.backend.IAM.Application.Internal.OutboundServices;
 using com.split.backend.IAM.Application.Internal.QueryServices;
@@ -10,6 +15,8 @@ using com.split.backend.IAM.Infrastructure.Tokens.JWT.Configuration;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Services;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration;
 using com.split.backend.Shared.Interfaces.ASP.Configuration;
+using com.split.backend.Bills.Application.ACL;
+using com.split.backend.Bills.Interface.ACL;
 using Cortex.Mediator.Behaviors;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
@@ -119,6 +126,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 
+// Bills Bounded Context Injection Configuration 
+builder.Services.AddScoped<IBillRepository, BillRepository>();
+builder.Services.AddScoped<IBillCommandService, BillCommandService>();
+builder.Services.AddScoped<IBillQueryService, BillQueryService>();
+builder.Services.AddScoped<IBillsContextFacade, BillsContextFacade>();
+
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
@@ -166,10 +179,9 @@ app.UseCors("AllowAllPolicy");
 //Add Authorization Middleware to Pipeline
 app.UseRouting();
 
-app.UseRequestAuthorization();
-
-
 app.UseAuthorization();
+
+app.UseRequestAuthorization();
 
 app.UseHttpsRedirection();
 
