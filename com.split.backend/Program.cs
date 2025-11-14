@@ -18,6 +18,12 @@ using com.split.backend.IAM.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.IAM.Infrastructure.Pipeline.MiddleWare.Extensions;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Configuration;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Services;
+using com.split.backend.Settings.Application.Internal.CommandServices;
+using com.split.backend.Settings.Application.Internal.OutboundServices.ACL;
+using com.split.backend.Settings.Application.Internal.QueryServices;
+using com.split.backend.Settings.Domain.Repositories;
+using com.split.backend.Settings.Domain.Services;
+using com.split.backend.Settings.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration;
 using com.split.backend.Shared.Interfaces.ASP.Configuration;
 using com.split.backend.Bills.Application.ACL;
@@ -40,6 +46,9 @@ using System.Text;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
 using Microsoft.Data.Sqlite;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -60,8 +69,8 @@ builder.Services.AddCors(options =>
 });
 
 
-SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
-sqliteConnection.Open();
+/*SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
+sqliteConnection.Open();*/
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -70,16 +79,37 @@ if(connectionString == null) throw new InvalidOperationException("Connection str
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (builder.Environment.IsProduction())
+    /*if (builder.Environment.IsProduction())
     {
-        options.UseNpgsql(connectionString)
+        options.UseSqlite(connectionString)
             .LogTo(Console.WriteLine, LogLevel.Information);
-    }
-    else if (builder.Environment.IsDevelopment())
+    }*/
+    if (builder.Environment.IsDevelopment() || builder.Environment.IsProduction())
     {
-        options.UseSqlite(sqliteConnection)
-            .LogTo(Console.WriteLine, LogLevel.Information);
+        options.UseMySql(
+            connectionString,
+            ServerVersion.AutoDetect(connectionString)
+        )
+        .LogTo(Console.WriteLine, LogLevel.Information);
     }
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    var secret = builder.Configuration["TokenSettings:Secret"]
+                 ?? throw new InvalidOperationException("TokenSettings:Secret configuration is missing.");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 //Learn more about configuring Swagger/OpenApi at https://aka.ms/aspnetcore/swashbuckle
@@ -151,6 +181,12 @@ builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
 builder.Services.AddScoped<IHouseHoldCommandService, HouseHoldCommandService>();
 builder.Services.AddScoped<IHouseHoldQueryService, HouseHoldQueryService>();
 
+// Settings Bounded Context Injection Configuration
+builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+builder.Services.AddScoped<ISettingsCommandService, SettingsCommandService>();
+builder.Services.AddScoped<ISettingsQueryService, SettingsQueryService>();
+builder.Services.AddScoped<IExternalIamService, ExternalIamService>();
+
 // HouseholdMembers Bounded Context Injection Configuration
 builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
 builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
@@ -206,6 +242,7 @@ app.UseCors("AllowAllPolicy");
 //Add Authorization Middleware to Pipeline
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequestAuthorization();
