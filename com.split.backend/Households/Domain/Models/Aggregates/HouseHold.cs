@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using com.split.backend.Households.Domain.Models.Commands;
 using com.split.backend.Households.Domain.Models.ValueObjects;
 using com.split.backend.IAM.Domain.Model.Aggregates;
 
@@ -34,6 +35,24 @@ public partial class HouseHold
         this.Name = name;
         this.RepresentativeId = representativeId;
         this.Currency = Enum.Parse<ECurrency>(currency);
+    }
+
+    public HouseHold(CreateHouseholdCommand command)
+    {
+        Id = "HOG" + DateTime.Now.ToString("yyyyMMddHHmmss");
+        this.Name = command.Name;
+        this.RepresentativeId = command.RepresentativeId;
+        this.Currency = Enum.Parse<ECurrency>(command.Currency);
+    }
+
+
+    public HouseHold UpdateHouseHold(UpdateHouseHoldCommand command)
+    {
+        if (!string.IsNullOrWhiteSpace(command.Name)) this.Name = command.Name;
+        if(command.RepresentativeId != 0) this.RepresentativeId = command.RepresentativeId;
+        if (!string.IsNullOrWhiteSpace(command.Currency)) this.Currency = Enum.Parse<ECurrency>(command.Currency);
+        
+        return this;
     }
     
 
