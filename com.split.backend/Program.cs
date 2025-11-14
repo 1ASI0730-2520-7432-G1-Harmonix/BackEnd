@@ -61,8 +61,8 @@ builder.Services.AddCors(options =>
 });
 
 
-SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
-sqliteConnection.Open();
+/*SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
+sqliteConnection.Open();*/
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -71,16 +71,16 @@ if(connectionString == null) throw new InvalidOperationException("Connection str
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (builder.Environment.IsProduction())
+    /*if (builder.Environment.IsProduction())
     {
-        options.UseNpgsql(connectionString)
+        options.UseSqlite(connectionString)
             .LogTo(Console.WriteLine, LogLevel.Information);
-    }
-    else if (builder.Environment.IsDevelopment())
+    }*/
+    if (builder.Environment.IsDevelopment() || builder.Environment.IsProduction())
     {
         options.UseMySql(
             connectionString,
-            new MySqlServerVersion(new Version(8, 0, 34))
+            ServerVersion.AutoDetect(connectionString)
         )
         .LogTo(Console.WriteLine, LogLevel.Information);
     }
