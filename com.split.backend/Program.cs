@@ -145,9 +145,11 @@ builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IBillCommandService, BillCommandService>();
 builder.Services.AddScoped<IBillQueryService, BillQueryService>();
 builder.Services.AddScoped<IBillsContextFacade, BillsContextFacade>();
+// HouseHold Bounded Context Injection Configuration
 
-// Households Bounded Context Injection Configuration
 builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
+builder.Services.AddScoped<IHouseHoldCommandService, HouseHoldCommandService>();
+builder.Services.AddScoped<IHouseHoldQueryService, HouseHoldQueryService>();
 
 // HouseholdMembers Bounded Context Injection Configuration
 builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
@@ -163,33 +165,6 @@ builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("Toke
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
-
-// JWT Authentication Configuration
-var tokenSettings = builder.Configuration.GetSection("TokenSettings").Get<TokenSettings>();
-if (tokenSettings?.Secret != null)
-{
-    var key = Encoding.ASCII.GetBytes(tokenSettings.Secret);
-    
-    builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-}
-
 
 //Mediator Configuration
 
