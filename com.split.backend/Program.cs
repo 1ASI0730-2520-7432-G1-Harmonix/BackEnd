@@ -1,3 +1,12 @@
+using com.split.backend.HouseholdMembers.Application.ACL;
+using com.split.backend.HouseholdMembers.Application.Internal.CommandServices;
+using com.split.backend.HouseholdMembers.Application.Internal.QueryServices;
+using com.split.backend.HouseholdMembers.Domain.Repositories;
+using com.split.backend.HouseholdMembers.Domain.Services;
+using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.HouseholdMembers.Interface.ACL;
+using com.split.backend.Households.Domain.Repositories;
+using com.split.backend.Households.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.IAM.Application.Internal.CommandServices;
 using com.split.backend.IAM.Application.Internal.OutboundServices;
 using com.split.backend.IAM.Application.Internal.QueryServices;
@@ -13,12 +22,13 @@ using com.split.backend.Shared.Interfaces.ASP.Configuration;
 using Cortex.Mediator.Behaviors;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
-using Microsoft.Data.Sqlite;
-
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -39,9 +49,6 @@ builder.Services.AddCors(options =>
 });
 
 
-SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
-sqliteConnection.Open();
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if(connectionString == null) throw new InvalidOperationException("Connection string not found.");
@@ -49,16 +56,8 @@ if(connectionString == null) throw new InvalidOperationException("Connection str
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (builder.Environment.IsProduction())
-    {
-        options.UseNpgsql(connectionString)
-            .LogTo(Console.WriteLine, LogLevel.Information);
-    }
-    else if (builder.Environment.IsDevelopment())
-    {
-        options.UseSqlite(sqliteConnection)
-            .LogTo(Console.WriteLine, LogLevel.Information);
-    }
+    options.UseMySQL(connectionString)
+        .LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 //Learn more about configuring Swagger/OpenApi at https://aka.ms/aspnetcore/swashbuckle
@@ -119,11 +118,49 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 
+// Households Bounded Context Injection Configuration
+builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
+
+// HouseholdMembers Bounded Context Injection Configuration
+builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
+builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
+builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
+
+// ACL Facades for HouseholdMembers
+builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
+builder.Services.AddScoped<IUserContextFacade, UserContextFacade>();
+
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
+
+// JWT Authentication Configuration
+var tokenSettings = builder.Configuration.GetSection("TokenSettings").Get<TokenSettings>();
+if (tokenSettings?.Secret != null)
+{
+    var key = Encoding.ASCII.GetBytes(tokenSettings.Secret);
+    
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+}
 
 
 //Mediator Configuration
@@ -166,8 +203,8 @@ app.UseCors("AllowAllPolicy");
 //Add Authorization Middleware to Pipeline
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseRequestAuthorization();
-
 
 app.UseAuthorization();
 
