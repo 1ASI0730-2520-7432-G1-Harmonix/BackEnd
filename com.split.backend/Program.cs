@@ -18,6 +18,12 @@ using com.split.backend.IAM.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.IAM.Infrastructure.Pipeline.MiddleWare.Extensions;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Configuration;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Services;
+using com.split.backend.Settings.Application.Internal.CommandServices;
+using com.split.backend.Settings.Application.Internal.OutboundServices.ACL;
+using com.split.backend.Settings.Application.Internal.QueryServices;
+using com.split.backend.Settings.Domain.Repositories;
+using com.split.backend.Settings.Domain.Services;
+using com.split.backend.Settings.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration;
 using com.split.backend.Shared.Interfaces.ASP.Configuration;
 using com.split.backend.Bills.Application.ACL;
@@ -25,11 +31,15 @@ using com.split.backend.Bills.Interface.ACL;
 using Cortex.Mediator.Behaviors;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
 using Microsoft.Data.Sqlite;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,9 +78,30 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }
     else if (builder.Environment.IsDevelopment())
     {
-        options.UseSqlite(sqliteConnection)
-            .LogTo(Console.WriteLine, LogLevel.Information);
+        options.UseMySql(
+            connectionString,
+            new MySqlServerVersion(new Version(8, 0, 34))
+        )
+        .LogTo(Console.WriteLine, LogLevel.Information);
     }
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    var secret = builder.Configuration["TokenSettings:Secret"]
+                 ?? throw new InvalidOperationException("TokenSettings:Secret configuration is missing.");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 //Learn more about configuring Swagger/OpenApi at https://aka.ms/aspnetcore/swashbuckle
@@ -142,6 +173,12 @@ builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
 builder.Services.AddScoped<IHouseHoldCommandService, HouseHoldCommandService>();
 builder.Services.AddScoped<IHouseHoldQueryService, HouseHoldQueryService>();
 
+// Settings Bounded Context Injection Configuration
+builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+builder.Services.AddScoped<ISettingsCommandService, SettingsCommandService>();
+builder.Services.AddScoped<ISettingsQueryService, SettingsQueryService>();
+builder.Services.AddScoped<IExternalIamService, ExternalIamService>();
+
 
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
@@ -190,6 +227,7 @@ app.UseCors("AllowAllPolicy");
 //Add Authorization Middleware to Pipeline
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequestAuthorization();
