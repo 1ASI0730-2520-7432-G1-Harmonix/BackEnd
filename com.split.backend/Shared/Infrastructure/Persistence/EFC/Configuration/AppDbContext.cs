@@ -1,3 +1,4 @@
+﻿using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Configuration.Extensions;
 ﻿using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Households.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -28,6 +29,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.ApplyIamConfiguration();
         builder.ApplyHouseHoldConfiguration();
         builder.ApplySettingsConfiguration();
+      
+        //Household-Member
+        builder.ApplyHouseholdMemberConfiguration();
         
         //Bills
         builder.ApplyBillsConfiguration();

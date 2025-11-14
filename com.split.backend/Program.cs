@@ -27,7 +27,14 @@ using com.split.backend.Settings.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration;
 using com.split.backend.Shared.Interfaces.ASP.Configuration;
 using com.split.backend.Bills.Application.ACL;
-using com.split.backend.Bills.Interface.ACL;
+using com.split.backend.Bills.Interface.ACL;    
+using com.split.backend.HouseholdMembers.Application.ACL;
+using com.split.backend.HouseholdMembers.Application.Internal.CommandServices;
+using com.split.backend.HouseholdMembers.Application.Internal.QueryServices;
+using com.split.backend.HouseholdMembers.Domain.Repositories;
+using com.split.backend.HouseholdMembers.Domain.Services;
+using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.HouseholdMembers.Interface.ACL;
 using Cortex.Mediator.Behaviors;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
@@ -35,6 +42,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
 using Microsoft.Data.Sqlite;
@@ -179,13 +187,20 @@ builder.Services.AddScoped<ISettingsCommandService, SettingsCommandService>();
 builder.Services.AddScoped<ISettingsQueryService, SettingsQueryService>();
 builder.Services.AddScoped<IExternalIamService, ExternalIamService>();
 
+// HouseholdMembers Bounded Context Injection Configuration
+builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
+builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
+builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
+
+// ACL Facades for HouseholdMembers
+builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
+builder.Services.AddScoped<IUserContextFacade, UserContextFacade>();
 
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
-
 
 //Mediator Configuration
 
