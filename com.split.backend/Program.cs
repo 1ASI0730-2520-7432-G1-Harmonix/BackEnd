@@ -40,6 +40,7 @@ using System.Text;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
 using Microsoft.Data.Sqlite;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -77,9 +78,30 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }
     else if (builder.Environment.IsDevelopment())
     {
-        options.UseSqlite(sqliteConnection)
+        options.UseMySql(
+                connectionString,
+                new MySqlServerVersion(new Version(8, 0, 34))
+            )
             .LogTo(Console.WriteLine, LogLevel.Information);
     }
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    var secret = builder.Configuration["TokenSettings:Secret"]
+                 ?? throw new InvalidOperationException("TokenSettings:Secret configuration is missing.");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 //Learn more about configuring Swagger/OpenApi at https://aka.ms/aspnetcore/swashbuckle
@@ -206,6 +228,7 @@ app.UseCors("AllowAllPolicy");
 //Add Authorization Middleware to Pipeline
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequestAuthorization();
