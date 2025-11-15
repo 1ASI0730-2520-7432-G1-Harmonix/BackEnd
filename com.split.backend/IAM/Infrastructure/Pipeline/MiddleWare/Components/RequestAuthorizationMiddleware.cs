@@ -20,7 +20,8 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
             .Any(m => m.GetType() == typeof(AllowAnonymousAttribute)) ?? false;
         var path = context.Request.Path.Value?.ToLower();
 
-        if (allowAnonymous || 
+        if (allowAnonymous ||
+            path == "/" ||
             path.Contains("/swagger") ||
             path.Contains("/api-docs") ||
             path.Contains("/health") ||
