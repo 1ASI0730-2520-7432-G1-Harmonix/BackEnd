@@ -15,7 +15,9 @@ public static class CreateHouseHoldCommandFromResourceAssembler
         return new CreateHouseholdCommand(
             resource.Name,
             resource.RepresentativeId,
-            resource.Currency);
+            resource.Currency,
+            resource.Description,
+            resource.MemberCount);
     }
     
 }

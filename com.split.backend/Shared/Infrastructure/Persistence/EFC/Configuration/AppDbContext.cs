@@ -1,5 +1,5 @@
 ﻿using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Configuration.Extensions;
-﻿using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Households.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Settings.Domain.Models.Aggregates;

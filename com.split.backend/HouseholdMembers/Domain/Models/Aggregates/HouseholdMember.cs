@@ -31,6 +31,7 @@ public partial class HouseholdMember
         this.UserId = -1;
         this.IsRepresentative = false;
         this.JoinedAt = DateTime.UtcNow;
+        this.CreatedDate = DateTime.UtcNow;
     }
 
     public HouseholdMember(string householdId, int userId, bool isRepresentative)
@@ -39,17 +40,20 @@ public partial class HouseholdMember
         this.UserId = userId;
         this.IsRepresentative = isRepresentative;
         this.JoinedAt = DateTime.UtcNow;
+        this.CreatedDate = DateTime.UtcNow;
     }
 
     public HouseholdMember PromoteToRepresentative()
     {
         this.IsRepresentative = true;
+        this.UpdatedDate = DateTime.UtcNow;
         return this;
     }
 
     public HouseholdMember DemoteRepresentative()
     {
         this.IsRepresentative = false;
+        this.UpdatedDate = DateTime.UtcNow;
         return this;
     }
 }
