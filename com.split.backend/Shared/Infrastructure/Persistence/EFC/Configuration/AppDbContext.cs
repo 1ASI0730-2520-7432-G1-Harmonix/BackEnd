@@ -43,8 +43,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         //Settings Context
         builder.ApplySettingsConfiguration();
         
+        //Income-Allocation Context
         
-      
+        builder.ApplyUserIncomeConfiguration();
+        
         //Household-Member Context
         builder.ApplyHouseholdMemberConfiguration();
         
