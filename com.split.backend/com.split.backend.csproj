@@ -61,7 +61,7 @@
       <Folder Include="HouseholdMembers\Infrastructure\" />
       <Folder Include="HouseholdMembers\Interface\" />
       <Folder Include="Households\Application\OurboundServices\" />
-      <Folder Include="MemberContributions\Application\" />
+      <Folder Include="MemberContributions\Application\ACL\" />
       <Folder Include="Resources\" />
       <Folder Include="Settings\Application\" />
       <Folder Include="Settings\Infrastructure\" />
