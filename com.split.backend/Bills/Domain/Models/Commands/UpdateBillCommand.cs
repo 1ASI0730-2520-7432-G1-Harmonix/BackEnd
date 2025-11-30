@@ -3,6 +3,7 @@
 namespace com.split.backend.Bills.Domain.Models.Commands;
 
 public record UpdateBillCommand(
+  string Id,
   string? Description,
   decimal? Amount,
   string? PaymentDate

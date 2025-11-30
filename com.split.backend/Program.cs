@@ -35,7 +35,6 @@ using com.split.backend.HouseholdMembers.Domain.Repositories;
 using com.split.backend.HouseholdMembers.Domain.Services;
 using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.HouseholdMembers.Interface.ACL;
-using Cortex.Mediator.Behaviors;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,6 +47,7 @@ using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repos
 using Microsoft.Data.Sqlite;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.Text;
+using com.split.backend.Shared.Infrastructure.Mediator.Cortex.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

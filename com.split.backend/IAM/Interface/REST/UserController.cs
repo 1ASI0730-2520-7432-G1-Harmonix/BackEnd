@@ -47,7 +47,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
         return Ok(userResource);
     }
 
-    [HttpPut("byEmail/{emailAddress}")]
+    [HttpPut("/byEmail/{emailAddress}")]
     public async Task<IActionResult> UpdateUserByEmail(string emailAddress, [FromBody] UpdateUserResource resource)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -67,7 +67,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
 
 
 
-    [HttpDelete("byEmail/{email}")]
+    [HttpDelete("/byEmail/{email}")]
     public async Task<IActionResult> DeleteUser(string email)
     {
         var command = new DeleteUserCommand(email);

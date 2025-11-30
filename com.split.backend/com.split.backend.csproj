@@ -68,7 +68,6 @@
       <Folder Include="Settings\Application\" />
       <Folder Include="Settings\Infrastructure\" />
       <Folder Include="Settings\Interface\" />
-      <Folder Include="Shared\Application\" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using com.split.backend.Bills.Domain.Models.Commands;
 using com.split.backend.Bills.Domain.Models.Queries;
 using com.split.backend.Bills.Domain.Services;
 using com.split.backend.Bills.Interface.REST.Resources;
@@ -11,67 +12,77 @@ namespace com.split.backend.Bills.Interface.REST;
 
 [ApiController]
 [Authorize]
-[Route("api/v1/households/{householdId}/[controller]")]
+[Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-[SwaggerTag("Manage bills and their related operations")]
+[SwaggerTag("Available Bills Endpoints")]
 public class BillsController(
-    IBillCommandService commandService,
-    IBillQueryService queryService) : ControllerBase
+    IBillCommandService billCommandService,
+    IBillQueryService billQueryService)
+    : ControllerBase
 {
-    int GetUserId() =>
-        ((com.split.backend.IAM.Domain.Model.Aggregates.User)HttpContext.Items["User"]!).Id;
-    
     [HttpGet]
-    [SwaggerOperation(Summary = "Retrieve all bills for the authenticated user")]
-    public async Task<ActionResult<IEnumerable<BillResource>>> List(
-        string householdId,                     
-        [FromQuery] DateOnly? from,
-        [FromQuery] DateOnly? to,
-        [FromQuery] string? status)
+    [SwaggerOperation("Get All Bills", OperationId = "GetAllBills")]
+    [SwaggerResponse(200, "The bills were found and returned", typeof(BillResource))]
+    [SwaggerResponse(404, "The bills were not found")]
+    public async Task<IActionResult> GetAllBills()
     {
-        var items = await queryService.Handle(
-            new GetBillsByHouseholdQuery(householdId, from, to, status)
-        );
-        return Ok(items.Select(BillResourceAssemblers.ToResource));
+        var getAllBillsQuery = new GetAllBillsQuery();
+        var bills = await billQueryService.Handle(getAllBillsQuery);
+        if(bills is null)
+            throw new ArgumentNullException(nameof(bills));
+        
+        var billResources = bills.Select(BillResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(billResources);
     }
-    
-    [HttpPost]
-    public async Task<ActionResult<BillResource>> Create(string householdId, [FromBody] CreateBillResource resource)
-    {
-        int userId = GetUserId(); 
-        var created = await commandService.Handle(
-            BillResourceAssemblers.ToCommand(householdId, userId, resource)
-        );
-        if (created is null) return BadRequest();
 
-        return CreatedAtAction(nameof(List), new { householdId }, BillResourceAssemblers.ToResource(created));
-    }
-    
-    [HttpPatch("{id:guid}")]
-    [SwaggerOperation("Actualizar un Bill existente")]
-    public async Task<ActionResult<BillResource>> Update(
-        string householdId,                     
-        Guid id,                              
-        [FromBody] UpdateBillResource resource)
+    [HttpGet("/byHousehold/{householdId}")]
+    [SwaggerOperation("Get By Household", OperationId = "GetByHousehold")]
+    [SwaggerResponse(200, "The bills were found and returned", typeof(IEnumerable<BillResource>))]
+    [SwaggerResponse(404, "The bills were not found")]
+    public async Task<IActionResult> GetBillsByHousehold(string householdId)
     {
-        var updated = await commandService.Handle(
-            BillResourceAssemblers.ToCommand(id, householdId, resource)
-        );
-
-        return updated is null
-            ? NotFound()
-            : Ok(BillResourceAssemblers.ToResource(updated));
+        var getBillsByHouseHoldIdQuery = new GetBillsByHouseholdIdQuery(householdId);
+        var bills = await billQueryService.Handle(getBillsByHouseHoldIdQuery);
+        if(bills is null)
+            throw new ArgumentNullException(nameof(bills));
+        
+        var billResources = bills.Select(BillResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(billResources);
     }
-    
+
+    [HttpPut("/byId/{id}")]
+    [SwaggerOperation("Update Bill", OperationId = "UpdateBill")]
+    [SwaggerResponse(200, "The bill was successfully updated", typeof(BillResource))]
+    [SwaggerResponse(404, "The bill were not found")]
+    [SwaggerResponse(400, "The bill was invalid")]
+    public async Task<IActionResult> UpdateBillById([FromRoute] string id, [FromBody] UpdateBillResource resource)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+           var updateBillCommand = UpdateBillCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+           var bill = await billCommandService.Handle(updateBillCommand);
+           if(bill is null) return NotFound();
+           var billResource = BillResourceFromEntityAssembler.ToResourceFromEntity(bill);
+           return Ok(billResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new {message = e.Message});
+        }
+        
+    }
+
     [HttpDelete("{id}")]
-    [SwaggerOperation("Eliminar un Bill")]
-    public async Task<IActionResult> Delete(
-        string householdId,                     
-        Guid id)                              
+    [SwaggerOperation("Delete Bill", OperationId = "DeleteBill")]
+    [SwaggerResponse(200, "The bill was successfully deleted", typeof(BillResource))]
+    [SwaggerResponse(404, "The bill was invalid")]
+    public async Task<IActionResult> DeleteBillById([FromRoute] string id)
     {
-        var ok = await commandService.Handle(
-            new com.split.backend.Bills.Domain.Models.Commands.DeleteBillCommand(id, householdId)
-        );
-        return ok ? NoContent() : NotFound();
+        var deleteCommand = new DeleteBillCommand(id);
+        var result = await billCommandService.Handle(deleteCommand);
+        if(!result) return NotFound();
+        return Ok(new { message = "The bill was successfully deleted" });
     }
 }

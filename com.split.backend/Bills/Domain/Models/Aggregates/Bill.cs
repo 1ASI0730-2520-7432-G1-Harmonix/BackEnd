@@ -2,8 +2,6 @@
 
 namespace com.split.backend.Bills.Domain.Models.Aggregates;
 
-public enum EBillStatus { Pending = 0, Paid = 1, Overdue = 2, Canceled = 3 }
-
 public partial class Bill
 {
     public string Id { get; set; }
@@ -51,7 +49,9 @@ public partial class Bill
     {
         if(!string.IsNullOrWhiteSpace(command.Description)) this.Description = command.Description;
         if(command.Amount != null) this.Amount = (decimal)command.Amount;
+        if(!string.IsNullOrWhiteSpace(command.PaymentDate)) this.PaymentDate = DateTime.Parse(command.PaymentDate);
         
+        return this;
     }
 
 

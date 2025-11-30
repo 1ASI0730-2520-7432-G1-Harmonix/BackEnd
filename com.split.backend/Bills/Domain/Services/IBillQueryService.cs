@@ -5,5 +5,7 @@ namespace com.split.backend.Bills.Domain.Services;
 
 public interface IBillQueryService
 {
-    Task<List<Bill>> Handle(GetBillsByHouseholdQuery query);
+    Task<IEnumerable<Bill?>> Handle(GetBillsByHouseholdIdQuery query);
+    
+    Task<IEnumerable<Bill?>> Handle(GetAllBillsQuery query);
 }

@@ -23,5 +23,8 @@ public static class ModelBuilderExtensions
         builder.Entity<PersonName>().Property(p => p.LastName);
         
         builder.Entity<User>().Property(u => u.HouseholdId).IsRequired();
+
+        builder.Entity<User>().Property(u => u.CreatedDate);
+        builder.Entity<User>().Property(u => u.UpdatedDate);
     }
 }
