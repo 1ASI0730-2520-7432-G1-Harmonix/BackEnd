@@ -9,7 +9,8 @@ using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 
 namespace com.split.backend.Contributions.Application.Internal.CommandServices;
 
-public class ContributionCommandService(IContributionRepository contributionRepository, IUnitOfWork unitOfWork, IMediator domainEventPublisher) : IContributionCommandService
+public class ContributionCommandService(IContributionRepository contributionRepository, IUnitOfWork unitOfWork,
+    IMediator domainEventPublisher) : IContributionCommandService
 {
     public async Task<Contribution?> Handle(CreateContributionCommand command)
     {
