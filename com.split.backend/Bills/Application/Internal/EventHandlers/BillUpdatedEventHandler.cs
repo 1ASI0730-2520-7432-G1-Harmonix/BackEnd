@@ -13,7 +13,7 @@ public class BillUpdatedEventHandler : IEventHandler<BillUpdatedEvent>
 
     private static Task On(BillUpdatedEvent domainEvent)
     {
-        Console.WriteLine("Category Updated: {0}", domainEvent.Description);
+        Console.WriteLine("Bill Updated: {0}", domainEvent.Description);
         return Task.CompletedTask;
     }
     

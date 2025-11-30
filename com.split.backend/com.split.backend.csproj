@@ -54,10 +54,8 @@
     
     
     <ItemGroup>
-      <Folder Include="Contributions\Application\" />
-      <Folder Include="Contributions\Domain\" />
-      <Folder Include="Contributions\Infrastructure\" />
-      <Folder Include="Contributions\Interface\" />
+      <Folder Include="Contributions\Application\ACL\" />
+      <Folder Include="Contributions\Interface\ACL\" />
       <Folder Include="HouseholdMembers\Application\" />
       <Folder Include="HouseholdMembers\Domain\" />
       <Folder Include="HouseholdMembers\Infrastructure\" />
