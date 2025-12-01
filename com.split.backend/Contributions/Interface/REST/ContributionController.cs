@@ -76,6 +76,21 @@ public class ContributionController(
         return Ok(contributionResources);
         
     }
+    
+    [HttpPost]
+    [SwaggerOperation("Create Contribution", "Create a new contribution")]
+    [SwaggerResponse(201, "The Contribution was created", typeof(ContributionResource))]
+    [SwaggerResponse(400, "The Contribution was not created")]
+    public async Task<IActionResult> CreateContribution([FromBody] CreateContributionResource resource)
+    {
+        var createContributionCommand =  CreateContributionCommandFromResourceAssembler.ToCommandFromResource(resource);
+        var contribution = await contributionCommandService.Handle(createContributionCommand);
+        if(contribution == null) return BadRequest();
+        var contributionResource = ContributionResourceFromEntityAssembler.ToResourceFromEntity(contribution);
+        return CreatedAtAction(nameof(GetContributionById), new { contributionId = contribution.Id}, contributionResource );
+    }
+
+
    
     [HttpPut("/byId/{id}")]
     [SwaggerOperation("Update Contribution", OperationId = "UpdateContribution")]
