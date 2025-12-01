@@ -1,7 +1,9 @@
 ﻿using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Configuration.Extensions;
-﻿using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Contributions.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Households.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.MemberContributions.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Settings.Domain.Models.Aggregates;
 using com.split.backend.Settings.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -27,13 +29,28 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         //ApplyContexts
         //IAM Context
         builder.ApplyIamConfiguration();
+        builder.ApplyUserIncomeConfiguration();
+        
+        //HouseHold Context
         builder.ApplyHouseHoldConfiguration();
+        
+        //Contributions Context
+        builder.ApplyContributionsConfiguration();
+        
+        //Member Contributions Context
+        builder.ApplyMemberContributionConfiguration();
+        
+        //Settings Context
         builder.ApplySettingsConfiguration();
-      
-        //Household-Member
+        
+        //Income-Allocation Context
+        
+        builder.ApplyUserIncomeConfiguration();
+        
+        //Household-Member Context
         builder.ApplyHouseholdMemberConfiguration();
         
-        //Bills
+        //Bills Context
         builder.ApplyBillsConfiguration();
         
         

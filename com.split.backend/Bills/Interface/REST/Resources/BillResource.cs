@@ -1,18 +1,10 @@
 ﻿namespace com.split.backend.Bills.Interface.REST.Resources;
 
 public record BillResource(
-    Guid Id,
-    string HouseholdId,
-    int CreatedByUserId,
-    string Title,
-    string Category,
+    string Id,
+    string HouseHoldId,
+    string Description,
     decimal Amount,
-    string Currency,
-    DateOnly DueDate,
-    DateTime? PaidAt,
-    string Status,
-    string? Notes,
-    DateTime CreatedAt,
-    DateTime UpdatedAt
-
+    long CreatedBy,
+    string PaymentDate
 );

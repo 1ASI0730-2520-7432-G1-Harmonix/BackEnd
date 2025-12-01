@@ -15,7 +15,7 @@ namespace com.split.backend.Settings.Interface.REST;
 
 [ApiController]
 [Authorize]
-[Route("api/v1/settings")]
+[Route("api/v1/[Controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 public class SettingsController(
     ISettingsCommandService commandService,

@@ -13,6 +13,12 @@ public partial class HouseHold
     public string Id { get; set; }
     [Column("Name")]
     public string Name { get; set; }
+    [Column("Description")]
+    public string Description { get; set; }
+    [Column("MemberCount")]
+    public int MemberCount { get; set; }
+    [Column("StartDate")]
+    public DateTime? StartDate { get; set; }
     [Column("RepresentativeId")]
     [Required]
     public long RepresentativeId { get; set; }
@@ -24,15 +30,21 @@ public partial class HouseHold
     {
         this.Id = String.Empty;
         this.Name = String.Empty;
+        this.Description = String.Empty;
+        this.MemberCount = 0;
+        this.StartDate = null;
         this.RepresentativeId = -1;
         this.Currency = null;
     }
 
     public HouseHold(string name,
-        long representativeId, string currency)
+        long representativeId, string currency, string description, int memberCount)
     {
         this.Id= "HOG" + DateTime.Now.ToString("yyyyMMddHHmmss");
         this.Name = name;
+        this.Description = description;
+        this.MemberCount = memberCount;
+        this.StartDate = new DateTime();
         this.RepresentativeId = representativeId;
         this.Currency = Enum.Parse<ECurrency>(currency);
     }
@@ -41,6 +53,9 @@ public partial class HouseHold
     {
         Id = "HOG" + DateTime.Now.ToString("yyyyMMddHHmmss");
         this.Name = command.Name;
+        this.Description = command.Description;
+        this.MemberCount = command.MemberCount;
+        this.StartDate = new DateTime();
         this.RepresentativeId = command.RepresentativeId;
         this.Currency = Enum.Parse<ECurrency>(command.Currency);
     }

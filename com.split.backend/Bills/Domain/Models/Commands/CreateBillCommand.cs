@@ -2,11 +2,8 @@
 
 public record CreateBillCommand(
     string HouseholdId,
-    int CreatedByUserId,
-    string Title,
-    string Category,
+    string Description,
     decimal Amount,
-    string Currency,
-    DateOnly DueDate,
-    string? Notes
+    long CreatedBy,
+    string PaymentDate
 );

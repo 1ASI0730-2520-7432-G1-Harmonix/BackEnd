@@ -35,7 +35,6 @@ using com.split.backend.HouseholdMembers.Domain.Repositories;
 using com.split.backend.HouseholdMembers.Domain.Services;
 using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.HouseholdMembers.Interface.ACL;
-using Cortex.Mediator.Behaviors;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,6 +47,17 @@ using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repos
 using Microsoft.Data.Sqlite;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.Text;
+using com.split.backend.Contributions.Application.Internal.CommandServices;
+using com.split.backend.Contributions.Application.Internal.QueryServices;
+using com.split.backend.Contributions.Domain.Repositories;
+using com.split.backend.Contributions.Domain.Services;
+using com.split.backend.Contributions.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.MemberContributions.Application.Internal.CommandServices;
+using com.split.backend.MemberContributions.Application.Internal.QueryServices;
+using com.split.backend.MemberContributions.Domain.Repositories;
+using com.split.backend.MemberContributions.Domain.Services;
+using com.split.backend.MemberContributions.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.Shared.Infrastructure.Mediator.Cortex.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -170,6 +180,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 
+builder.Services.AddScoped<IUserIncomeRepository, UserIncomeRepository>();
+builder.Services.AddScoped<IUserIncomeCommandService, UserIncomeCommandServices>();
+builder.Services.AddScoped<IUserIncomeQueryService, UserIncomeQueryServices>();
+
+
+//MemberContribution BC Injection Configuration
+builder.Services.AddScoped<IMemberContributionRepository, MemberContributionRepository>();
+builder.Services.AddScoped<IMemberContributionCommandService, MemberContributionCommandServices>();
+builder.Services.AddScoped<IMemberContributionQueryService, MemberContributionQueryServices>();
+
+
 // Bills Bounded Context Injection Configuration 
 builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IBillCommandService, BillCommandService>();
@@ -181,6 +202,16 @@ builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
 builder.Services.AddScoped<IHouseHoldCommandService, HouseHoldCommandService>();
 builder.Services.AddScoped<IHouseHoldQueryService, HouseHoldQueryService>();
 
+//Contribution BoundedContext Injection Configuration
+builder.Services.AddScoped<IContributionRepository, ContributionRepository>();
+builder.Services.AddScoped<IContributionCommandService, ContributionCommandService>();
+builder.Services.AddScoped<IContributionQueryService, ContributionQueryService>();
+
+//Income Allocation Bounded Context Injection Configuration
+builder.Services.AddScoped<IIncomeAllocationRepository, IncomeAllocationRepository>();
+builder.Services.AddScoped<IIncomeAllocationCommandService, IncomeAllocationCommandService>();
+builder.Services.AddScoped<IIncomeAllocationQueryService, IncomeAllocationQueryService>();
+
 // Settings Bounded Context Injection Configuration
 builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
 builder.Services.AddScoped<ISettingsCommandService, SettingsCommandService>();
@@ -191,6 +222,8 @@ builder.Services.AddScoped<IExternalIamService, ExternalIamService>();
 builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
 builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
 builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
+
+//
 
 // ACL Facades for HouseholdMembers
 builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
@@ -223,8 +256,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
 
-    if (app.Environment.IsDevelopment())
-        context.Database.EnsureDeleted();
+    /*if (app.Environment.IsDevelopment())
+        context.Database.EnsureDeleted();*/
     
     context.Database.EnsureCreated();
 }

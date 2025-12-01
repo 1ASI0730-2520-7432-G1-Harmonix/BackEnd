@@ -3,13 +3,8 @@
 namespace com.split.backend.Bills.Domain.Models.Commands;
 
 public record UpdateBillCommand(
-    Guid Id,
-    string HouseholdId,
-    string? Title,
-    string? Category,
-    decimal? Amount,
-    string? Currency,
-    DateOnly? DueDate,
-    EBillStatus? Status,
-    string? Notes
+  string Id,
+  string? Description,
+  decimal? Amount,
+  string? PaymentDate
 );
