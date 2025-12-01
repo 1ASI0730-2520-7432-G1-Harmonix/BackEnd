@@ -7,5 +7,7 @@ namespace com.split.backend.Households.Domain.Models.Commands;
 public record CreateHouseholdCommand(
     string Name,
     long RepresentativeId,
-    string Currency
+    string Currency,
+    string Description,
+    int MemberCount
 ) ;

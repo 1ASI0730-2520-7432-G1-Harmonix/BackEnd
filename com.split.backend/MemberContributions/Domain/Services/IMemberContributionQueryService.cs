@@ -5,8 +5,8 @@ namespace com.split.backend.MemberContributions.Domain.Services;
 
 public interface IMemberContributionQueryService
 {
-    Task<MemberContribution?> Handle(GetAllMemberContributionsQuery query);
-    Task<MemberContribution?> Handle(GetMemberContributionsByContributionIdQuery query);
-    Task<MemberContribution?> Handle(GetMemberContributionsByMemberIdQuery query);
+    Task<IEnumerable<MemberContribution?>> Handle(GetAllMemberContributionsQuery query);
+    Task<IEnumerable<MemberContribution?>> Handle(GetMemberContributionsByContributionIdQuery query);
+    Task<IEnumerable<MemberContribution?>> Handle(GetMemberContributionsByMemberIdQuery query);
     
 }

@@ -1,3 +1,3 @@
 ﻿namespace com.split.backend.MemberContributions.Domain.Model.Commands;
 
-public record UpdateMemberContributionAmountCommand(decimal Amount);
+public record UpdateMemberContributionAmountCommand(string Id, decimal Amount);

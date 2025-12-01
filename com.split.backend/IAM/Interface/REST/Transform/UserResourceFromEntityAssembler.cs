@@ -3,7 +3,7 @@ using com.split.backend.IAM.Interface.REST.Resources;
 
 namespace com.split.backend.IAM.Interface.REST.Transform;
 
-public class UserResourceFromEntityAssembler
+public static class UserResourceFromEntityAssembler
 {
     public static UserResource ToResourceFromEntity(User entity)
     {
@@ -11,6 +11,10 @@ public class UserResourceFromEntityAssembler
             entity.Email.Address,
             entity.PersonName.FirstName.ToString(),
             entity.HouseholdId.ToString(),
-                entity.Role.ToString());
+                entity.Role.ToString(),
+            entity.Plan.ToString(),
+            entity.Photo.AbsoluteUri,
+            entity.ProfileLockedUntil.ToString(),
+            entity.IsNewUser.Value.ToString());
     }
 }
