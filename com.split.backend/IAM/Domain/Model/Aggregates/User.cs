@@ -52,6 +52,10 @@ public partial class User
         this.Email = new EmailAddress(command.EmailAddress);
         this.PersonName = new PersonName(command.Name);
         this.HouseholdId = "HH" + DateTime.Now.Ticks;
+        this.Status = true;
+        this.Plan = EPlan.Free;
+        this.ProfileLockedUntil = null;
+        this.IsNewUser = true;
     }
 
     public User UpdateUsername(string username)
