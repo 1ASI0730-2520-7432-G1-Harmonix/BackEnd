@@ -17,7 +17,7 @@ public partial class User
     [Column("Role")]
     public Role Role { get; set; } = new Role();
     [Column("Status")]
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
     [Column("HouseholdId")]
     public string HouseholdId { get; set; }
 
@@ -30,13 +30,19 @@ public partial class User
     }
 
     public User(string email, string name, string password, 
-        string role, string householdId)
+        string role,string status, string householdId, 
+        int plan, string photo, string profileLockedUntil, bool isNewUser)
     {
         this.Role = Enum.Parse<Role>(role);
         this.Password = password;
         this.Email = new EmailAddress(email);
         this.PersonName = new PersonName(name);
+        this.Status = string.Equals(status, "active", StringComparison.OrdinalIgnoreCase); 
         this.HouseholdId = householdId;
+        this.Plan = (EPlan)plan;
+        this.Photo = new Uri(photo);
+        this.ProfileLockedUntil = DateTime.Parse(profileLockedUntil);
+        this.IsNewUser = isNewUser;
     }
 
     public User(SignUpCommand command, string hashedPassword)
