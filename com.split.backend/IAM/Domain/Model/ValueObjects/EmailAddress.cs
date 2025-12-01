@@ -4,13 +4,17 @@ namespace com.split.backend.IAM.Domain.Model.ValueObjects;
 
 public class EmailAddress
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
     public string Address { get; set; }
 
-    public EmailAddress(): this(string.Empty){}
+    public EmailAddress()
+    {
+        Id = Guid.NewGuid().ToString();
+        Address = String.Empty;
+    }
     public EmailAddress(string address)
     {
-        Id =  Guid.NewGuid();
+        Id =  Guid.NewGuid().ToString();
         Address = Normalize(address);
     }
 
@@ -18,6 +22,7 @@ public class EmailAddress
     {
         return (email ?? string.Empty).Trim().ToLowerInvariant();
     }
+    
     public void Change(EmailAddress email)
     {
         if(email.Address.Length >0)
