@@ -20,7 +20,7 @@ namespace com.split.backend.IAM.Interface.REST;
 [SwaggerTag("Available User endpoints")]
 public class UserController(IUserQueryService userQueryService, IUserCommandService userCommandService) : ControllerBase
 {
-    [HttpGet("/user/{id}")]
+    [HttpGet("user/{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {
         var getUserByIdQuery = new GetUsersByIdQuery(id);
@@ -38,7 +38,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
         return Ok(userResources);
     }
 
-    [HttpGet("/houseHoldId/{mainHouseHoldId}")]
+    [HttpGet("houseHoldId/{mainHouseHoldId}")]
     public async Task<IActionResult> GetUserByHouseHoldId(string houseHoldId)
     {
         var getUserByMainHouseHoldIdQuery = new GetUserByMainHouseHoldId(houseHoldId);
@@ -47,7 +47,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
         return Ok(userResource);
     }
 
-    [HttpPut("/byEmail/{emailAddress}")]
+    [HttpPut("byEmail/{emailAddress}")]
     public async Task<IActionResult> UpdateUserByEmail(string emailAddress, [FromBody] UpdateUserResource resource)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -67,7 +67,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
 
 
 
-    [HttpDelete("/byEmail/{email}")]
+    [HttpDelete("byEmail/{email}")]
     public async Task<IActionResult> DeleteUser(string email)
     {
         var command = new DeleteUserCommand(email);

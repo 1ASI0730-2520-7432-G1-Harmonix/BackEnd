@@ -49,7 +49,7 @@ public class ContributionController(
         return Ok(contributionResource);
     }
 
-    [HttpGet("/byBillId/{billId}")]
+    [HttpGet("byBillId/{billId}")]
     [SwaggerOperation("Get Contribution by Bill Id", OperationId = "GetContributionByBillId")]
     [SwaggerResponse(200, "The Contributions was found", typeof(ContributionResource))]
     public async Task<IActionResult> GetContributionsByBillId([FromRoute] string billId)
@@ -63,7 +63,7 @@ public class ContributionController(
         return Ok(contributionResources);
     }
 
-    [HttpGet("/byHouseHoldId/{householdId}")]
+    [HttpGet("byHouseHoldId/{householdId}")]
     [SwaggerOperation("Get Contributions By HouseHoldId", OperationId = "GetContributionsByHouseHoldId")]
     [SwaggerResponse(200, "The Contributions was found", typeof(ContributionResource))]
     public async Task<IActionResult> GetContributionsByHouseHoldId([FromRoute] string householdId)
@@ -92,7 +92,7 @@ public class ContributionController(
 
 
    
-    [HttpPut("/byId/{id}")]
+    [HttpPut("byId/{id}")]
     [SwaggerOperation("Update Contribution", OperationId = "UpdateContribution")]
     [SwaggerResponse(200, "The contribution was successfully updated", typeof(ContributionResource))]
     [SwaggerResponse(404, "The contribution was not found")]

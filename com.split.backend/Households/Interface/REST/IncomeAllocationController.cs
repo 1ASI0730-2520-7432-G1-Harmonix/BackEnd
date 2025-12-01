@@ -19,7 +19,7 @@ public class IncomeAllocationController(
     IIncomeAllocationCommandService commandService,
     IIncomeAllocationQueryService queryService) : ControllerBase
 {
-    [HttpGet("/byHousehold/{householdId}")]
+    [HttpGet("byHousehold/{householdId}")]
     [SwaggerOperation("Get Income Allocations by Household", "Get Income Allocations by Household Id")]
     [SwaggerResponse(200, "The IncomeAllocations were found and returned", typeof(IncomeAllocationResource))]
     [SwaggerResponse(404, "The IncomeAllocations were not found")]
@@ -34,7 +34,7 @@ public class IncomeAllocationController(
         return Ok(incomeAllocationsResource);
     }
     
-    [HttpGet("/byUserId/{userId:long}")]
+    [HttpGet("byUserId/{userId:long}")]
     [SwaggerOperation("Get Income Allocations by UserId", "Get Income Allocations by User Id")]
     [SwaggerResponse(200, "The IncomeAllocations were found and returned", typeof(IncomeAllocationResource))]
     [SwaggerResponse(404, "The IncomeAllocations were not found")]
@@ -64,7 +64,7 @@ public class IncomeAllocationController(
 
     
     
-    [HttpPut("/byId/{id}")]
+    [HttpPut("byId/{id}")]
     [SwaggerOperation("Update IncomeAllocation", "UpdateIncomeAllocation")]
     [SwaggerResponse(200, "The IncomeAllocation was successfully updated", typeof(IncomeAllocationResource))]
     [SwaggerResponse(400, "The IncomeAllocation was not updated/invalid")]

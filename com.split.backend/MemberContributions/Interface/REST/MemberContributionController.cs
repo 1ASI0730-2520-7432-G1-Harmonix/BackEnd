@@ -34,7 +34,7 @@ public class MemberContributionController(
         return Ok(contributionsResource);
     }
 
-    [HttpGet("/byContributionId/{contributionId}")]
+    [HttpGet("byContributionId/{contributionId}")]
     [SwaggerOperation("Get MemberContribution by Contribution Id", OperationId = "GetMemberContributionByContributionId")]
     [SwaggerResponse(200, "The MemberContribution was found", typeof(MemberContributionResource))]
     public async Task<IActionResult> GetMemberContributionByContributionId([FromRoute] string contributionId)
@@ -48,7 +48,7 @@ public class MemberContributionController(
         return Ok(contributionResources);
     }
 
-    [HttpGet("/byMemberId/{memberId}")]
+    [HttpGet("byMemberId/{memberId}")]
     [SwaggerOperation("Get MemberContribution By MemberId", OperationId = "GetMemberContributionsByMemberId")]
     [SwaggerResponse(200, "The MemberContribution was found", typeof(MemberContributionResource))]
     public async Task<IActionResult> GetMemberContributionByMemberId([FromRoute] string memberId)

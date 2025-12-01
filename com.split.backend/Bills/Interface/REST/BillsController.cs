@@ -35,7 +35,7 @@ public class BillsController(
         return Ok(billResources);
     }
 
-    [HttpGet("/byHousehold/{householdId}")]
+    [HttpGet("byHousehold/{householdId}")]
     [SwaggerOperation("Get By Household", OperationId = "GetByHousehold")]
     [SwaggerResponse(200, "The bills were found and returned", typeof(IEnumerable<BillResource>))]
     [SwaggerResponse(404, "The bills were not found")]
@@ -50,7 +50,7 @@ public class BillsController(
         return Ok(billResources);
     }
 
-    [HttpPut("/byId/{id}")]
+    [HttpPut("byId/{id}")]
     [SwaggerOperation("Update Bill", OperationId = "UpdateBill")]
     [SwaggerResponse(200, "The bill was successfully updated", typeof(BillResource))]
     [SwaggerResponse(404, "The bill were not found")]

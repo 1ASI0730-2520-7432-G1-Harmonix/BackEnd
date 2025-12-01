@@ -24,6 +24,12 @@ public static class ModelBuilderExtensions
         
         builder.Entity<User>().Property(u => u.HouseholdId).IsRequired();
 
+        builder.Entity<User>().Property(u => u.Status);
+        builder.Entity<User>().Property(u => u.Plan);
+        builder.Entity<User>().Property(u => u.Photo);
+        builder.Entity<User>().Property(u => u.ProfileLockedUntil);
+        builder.Entity<User>().Property(u => u.IsNewUser);
+
         builder.Entity<User>().Property(u => u.CreatedDate);
         builder.Entity<User>().Property(u => u.UpdatedDate);
     }

@@ -56,7 +56,7 @@ public class UserIncomeController(
         return Ok(userIncomeResource);
     }
 
-    [HttpGet("/byUserId/{userId:long}")]
+    [HttpGet("byUserId/{userId:long}")]
     [SwaggerOperation("Get UserIncome by User Id", OperationId = "GetUserIncomeByUserId")]
     [SwaggerResponse(200, "The UserIncome was found", typeof(UserIncomeResource))]
     public async Task<IActionResult> GetUserIncomeByUserId([FromRoute] long userId)
@@ -72,7 +72,7 @@ public class UserIncomeController(
 
 
    
-    [HttpPut("/byId/{id}")]
+    [HttpPut("byId/{id}")]
     [SwaggerOperation("Update UserIncome", OperationId = "UpdateUserIncome")]
     [SwaggerResponse(200, "The userIncome was successfully updated", typeof(UserIncomeResource))]
     [SwaggerResponse(404, "The userIncome was not found")]
