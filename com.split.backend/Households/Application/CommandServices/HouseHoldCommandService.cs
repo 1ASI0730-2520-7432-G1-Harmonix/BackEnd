@@ -4,6 +4,7 @@ using com.split.backend.Households.Domain.Repositories;
 using com.split.backend.Households.Domain.Services;
 using com.split.backend.IAM.Domain.Model.Aggregates;
 using com.split.backend.IAM.Domain.Repositories;
+using com.split.backend.IAM.Domain.Model.ValueObjects;
 using com.split.backend.Shared.Domain.Repositories;
 
 namespace com.split.backend.Households.Application.CommandServices;
@@ -18,7 +19,20 @@ public class HouseHoldCommandService(
     {
         // Validate representative exists
         var rep = await userRepository.FindByIdAsync((int)command.RepresentativeId);
-        if (rep is null) return null;
+        if (rep is null) throw new InvalidOperationException("Representative not found.");
+
+        var repPlan = rep.Plan ?? EPlan.Free; // assume Free when undefined
+
+        if (repPlan == EPlan.Free)
+        {
+            var existing = await houseHoldRepository.FindByRepresentativeIdAsync(command.RepresentativeId);
+            if (existing.Any())
+                throw new InvalidOperationException("Free plan allows only one household. Delete the existing one first.");
+            if (command.MemberCount > 3)
+                throw new InvalidOperationException("Free plan allows up to 3 members.");
+        }
+        if (command.MemberCount < 1)
+            throw new InvalidOperationException("Member count must be at least 1.");
 
         var household = new HouseHold(command);
         try
@@ -38,6 +52,12 @@ public class HouseHoldCommandService(
     {
         var household = await houseHoldRepository.FindByStringIdAsync(command.Id);
         if (household == null) return null;
+
+        var rep = await userRepository.FindByIdAsync((int)household.RepresentativeId);
+        if (rep?.Plan == EPlan.Free && command.MemberCount > 3)
+            throw new InvalidOperationException("Free plan allows up to 3 members.");
+        if (command.MemberCount < 1)
+            throw new InvalidOperationException("Member count must be at least 1.");
 
         household.UpdateHouseHold(command);
         

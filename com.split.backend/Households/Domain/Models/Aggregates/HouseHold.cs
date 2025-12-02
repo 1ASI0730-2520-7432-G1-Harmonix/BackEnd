@@ -40,7 +40,7 @@ public partial class HouseHold
     public HouseHold(string name,
         long representativeId, string currency, string description, int memberCount)
     {
-        this.Id= "HOG" + DateTime.Now.ToString("yyyyMMddHHmmss");
+        this.Id = "HH" + DateTimeOffset.UtcNow.Ticks;
         this.Name = name;
         this.Description = description;
         this.MemberCount = memberCount;

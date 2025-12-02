@@ -21,7 +21,10 @@ public class AuthenticationController(IUserCommandService userCommandService) : 
     {
         var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(signInResource);
         var authenticatedUser = await userCommandService.Handle(signInCommand);
-        var resource = AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(authenticatedUser.user, authenticatedUser.token);
+        var resource = AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(
+            authenticatedUser.user, 
+            authenticatedUser.token,
+            authenticatedUser.wasNewUser);
         return Ok(resource);
     }
 

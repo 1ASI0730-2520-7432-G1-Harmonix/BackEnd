@@ -39,11 +39,18 @@ public class HouseHoldController(
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var createHouseHoldCommand = CreateHouseHoldCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var household = await commandService.Handle(createHouseHoldCommand);
-        if (household is null) return BadRequest(new { message = "RepresentativeId not found or invalid data." });
-        var houseHoldResource = HouseholdResourceFromEntityAssembler.ToResourceFromEntity(household);
-        return CreatedAtAction(nameof(GetHouseHoldById), new { id = household.Id }, houseHoldResource);
+        try
+        {
+            var createHouseHoldCommand = CreateHouseHoldCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var household = await commandService.Handle(createHouseHoldCommand);
+            if (household is null) return BadRequest(new { message = "RepresentativeId not found or invalid data." });
+            var houseHoldResource = HouseholdResourceFromEntityAssembler.ToResourceFromEntity(household);
+            return CreatedAtAction(nameof(GetHouseHoldById), new { id = household.Id }, houseHoldResource);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
@@ -54,11 +61,18 @@ public class HouseHoldController(
     {
         Console.WriteLine($"PUT Household INVOCADO: id={id}");
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var updateCommand = UpdateHouseHoldCommandFromResourceAssembler.ToCommandFromResource(id, resource);
-        var household = await commandService.Handle(updateCommand);
-        if (household is null) return NotFound();
-        var houseHoldResource = HouseholdResourceFromEntityAssembler.ToResourceFromEntity(household);
-        return Ok(houseHoldResource);
+        try
+        {
+            var updateCommand = UpdateHouseHoldCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var household = await commandService.Handle(updateCommand);
+            if (household is null) return NotFound();
+            var houseHoldResource = HouseholdResourceFromEntityAssembler.ToResourceFromEntity(household);
+            return Ok(houseHoldResource);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpGet("representative/{representativeId}")]

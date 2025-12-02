@@ -7,6 +7,7 @@ public static class SignUpCommandFromResourceAssembler
 {
     public static SignUpCommand ToCommandFromResource(SignUpResource resource)
     {
-        return new SignUpCommand(resource.Email.ToString(), resource.Password, resource.Name, resource.Role);
+        var plan = resource.Plan <= 0 ? 1 : resource.Plan; // default Free = 1
+        return new SignUpCommand(resource.Email.ToString(), resource.Password, resource.Name, resource.Role, plan);
     }
 }

@@ -53,7 +53,7 @@ public partial class User
         this.PersonName = new PersonName(command.Name);
         this.HouseholdId = "HH" + DateTime.Now.Ticks;
         this.Status = true;
-        this.Plan = EPlan.Free;
+        this.Plan = Enum.IsDefined(typeof(EPlan), command.Plan) ? (EPlan)command.Plan : EPlan.Free;
         this.ProfileLockedUntil = null;
         this.IsNewUser = true;
     }

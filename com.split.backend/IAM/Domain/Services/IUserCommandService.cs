@@ -6,7 +6,7 @@ namespace com.split.backend.IAM.Domain.Services;
 
 public interface IUserCommandService
 {
-    Task<(User user, string token)> Handle(SignInCommand command);
+    Task<(User user, string token, bool wasNewUser)> Handle(SignInCommand command);
     
     Task Handle(SignUpCommand command);
     Task <bool>Handle(DeleteUserCommand command);
