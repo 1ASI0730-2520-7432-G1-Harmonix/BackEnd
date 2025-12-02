@@ -14,7 +14,8 @@ public static class UpdateHouseholdMemberCommandFromResourceAssembler
         
         return new UpdateHouseholdMemberCommand(
             id,
+            resource.HouseholdId,
+            resource.UserId,
             resource.IsRepresentative);
     }
 }
-

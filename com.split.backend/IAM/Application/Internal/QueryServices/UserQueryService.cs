@@ -21,9 +21,4 @@ public class UserQueryService(IUserRepository userRepository) : IUserQueryServic
     {
         return await userRepository.FindByHouseHoldIdAsync(query.HouseHoldId);
     }
-
-    public async Task<User?> Handle(GetUserByEmailQuery query)
-    {
-        return await userRepository.FindByEmailAsync(query.Email);
-    }
 }

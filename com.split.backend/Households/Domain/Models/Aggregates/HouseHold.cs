@@ -51,21 +51,35 @@ public partial class HouseHold
 
     public HouseHold(CreateHouseholdCommand command)
     {
-        Id = "HOG" + DateTime.Now.ToString("yyyyMMddHHmmss");
+        Id = !string.IsNullOrWhiteSpace(command.Id)
+            ? command.Id
+            : "HH" + DateTimeOffset.UtcNow.Ticks;
+
         this.Name = command.Name;
-        this.Description = command.Description;
-        this.MemberCount = command.MemberCount;
-        this.StartDate = new DateTime();
+        this.Description = command.Description ?? string.Empty;
+        this.MemberCount = command.MemberCount <= 0 ? 1 : command.MemberCount;
+        this.StartDate = command.StartDate ?? DateTime.UtcNow;
         this.RepresentativeId = command.RepresentativeId;
-        this.Currency = Enum.Parse<ECurrency>(command.Currency);
+
+        if (!Enum.TryParse<ECurrency>(command.Currency, true, out var parsedCurrency))
+            parsedCurrency = ECurrency.USD;
+
+        this.Currency = parsedCurrency;
     }
 
 
     public HouseHold UpdateHouseHold(UpdateHouseHoldCommand command)
     {
         if (!string.IsNullOrWhiteSpace(command.Name)) this.Name = command.Name;
-        if(command.RepresentativeId != 0) this.RepresentativeId = command.RepresentativeId;
-        if (!string.IsNullOrWhiteSpace(command.Currency)) this.Currency = Enum.Parse<ECurrency>(command.Currency);
+        this.Description = command.Description ?? string.Empty;
+        if (command.MemberCount > 0) this.MemberCount = command.MemberCount;
+        if (command.RepresentativeId > 0) this.RepresentativeId = command.RepresentativeId;
+        if (!string.IsNullOrWhiteSpace(command.Currency) &&
+            Enum.TryParse<ECurrency>(command.Currency, true, out var parsedCurrency))
+        {
+            this.Currency = parsedCurrency;
+        }
+        if (command.StartDate.HasValue) this.StartDate = command.StartDate;
         
         return this;
     }

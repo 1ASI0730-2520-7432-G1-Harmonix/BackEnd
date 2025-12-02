@@ -17,4 +17,3 @@ public interface IHouseholdMemberRepository : IBaseRepository<HouseholdMember>
     
     bool ExistsByHouseholdIdAndUserId(string householdId, int userId);
 }
-

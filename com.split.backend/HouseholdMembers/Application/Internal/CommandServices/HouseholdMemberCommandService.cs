@@ -111,5 +111,6 @@ public class HouseholdMemberCommandService(
         await unitOfWork.CompleteAsync();
         return member;
     }
+
 }
 

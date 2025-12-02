@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
 
-public class HouseholdMemberRepository(AppDbContext context) 
-    : BaseRepository<HouseholdMember>(context), IHouseholdMemberRepository
+public class HouseholdMemberRepository(AppDbContext context) : BaseRepository<HouseholdMember>(context), IHouseholdMemberRepository
 {
     public async Task<HouseholdMember?> FindByIdAsync(int id)
     {
@@ -22,16 +21,18 @@ public class HouseholdMemberRepository(AppDbContext context)
 
     public async Task<IEnumerable<HouseholdMember>> FindByHouseholdIdAsync(string householdId)
     {
-        return await Context.Set<HouseholdMember>()
+        var list = await Context.Set<HouseholdMember>()
             .Where(m => m.HouseholdId == householdId)
             .ToListAsync();
+        return list;
     }
 
     public async Task<IEnumerable<HouseholdMember>> FindByUserIdAsync(int userId)
     {
-        return await Context.Set<HouseholdMember>()
+        var list = await Context.Set<HouseholdMember>()
             .Where(m => m.UserId == userId)
             .ToListAsync();
+        return list;
     }
 
     public async Task<HouseholdMember?> FindRepresentativeByHouseholdIdAsync(string householdId)
@@ -46,4 +47,3 @@ public class HouseholdMemberRepository(AppDbContext context)
             .Any(m => m.HouseholdId == householdId && m.UserId == userId);
     }
 }
-

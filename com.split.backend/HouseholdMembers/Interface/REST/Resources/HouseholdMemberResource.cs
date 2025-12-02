@@ -7,4 +7,3 @@ public record HouseholdMemberResource(
     bool IsRepresentative,
     DateTime JoinedAt
 );
-

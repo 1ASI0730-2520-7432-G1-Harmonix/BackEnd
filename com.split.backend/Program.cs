@@ -223,8 +223,6 @@ builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository
 builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
 builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
 
-//
-
 // ACL Facades for HouseholdMembers
 builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
 builder.Services.AddScoped<IUserContextFacade, UserContextFacade>();
