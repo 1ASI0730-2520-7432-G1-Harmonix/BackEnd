@@ -35,6 +35,11 @@ using com.split.backend.HouseholdMembers.Domain.Repositories;
 using com.split.backend.HouseholdMembers.Domain.Services;
 using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.HouseholdMembers.Interface.ACL;
+using com.split.backend.Invitations.Application.Internal.CommandServices;
+using com.split.backend.Invitations.Application.Internal.QueryServices;
+using com.split.backend.Invitations.Domain.Repositories;
+using com.split.backend.Invitations.Domain.Services;
+using com.split.backend.Invitations.Infrastructure.Persistence.EFC.Repositories;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -222,6 +227,11 @@ builder.Services.AddScoped<IExternalIamService, ExternalIamService>();
 builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
 builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
 builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
+
+// Invitations Bounded Context
+builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
+builder.Services.AddScoped<IInvitationCommandService, InvitationCommandService>();
+builder.Services.AddScoped<IInvitationQueryService, InvitationQueryService>();
 
 // ACL Facades for HouseholdMembers
 builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
