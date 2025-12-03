@@ -23,6 +23,6 @@ public class PersonName
     public string FullName => $"{FirstName} {LastName}";
     
     
-    public int UserId { get; private set; }
-    public User User { get; private set; }
+    public int UserId { get; set; }
+    public User User { get; set; }
 }

@@ -8,29 +8,15 @@ public static class UserResourceFromEntityAssembler
     public static UserResource ToResourceFromEntity(User entity)
     {
         return new UserResource(
-            Id: entity.Id,
-
-            Email: entity.Email?.Address ?? string.Empty,
-
-            PersonName: entity.PersonName?.FirstName 
-                        ?? string.Empty,
-
-            HouseHoldId: entity.HouseholdId ?? string.Empty,
-
-            Role: entity.Role.ToString() 
-                  ?? "Unknown",
-
-            Plan: entity.Plan?.ToString() 
-                  ?? "Unspecified",
-
-            Photo: entity.Photo?.AbsoluteUri 
-                   ?? string.Empty,
-
-            ProfileLockedUntil: entity.ProfileLockedUntil?.ToString("O") 
-                                ?? string.Empty,
-
-            IsNewUser: entity.IsNewUser?.ToString() 
-                       ?? "false"
+            entity.Id,
+            entity.Email.Address,
+            entity.PersonName.FirstName,
+            entity.HouseholdId,
+            entity.Role.ToString(),
+            entity.Plan?.ToString() ?? "Unspecified",
+            entity.Photo?.AbsoluteUri ?? string.Empty,
+            entity.ProfileLockedUntil?.ToString() ?? string.Empty,
+            entity.IsNewUser?.ToString() ?? "false"
         );
     }
 }

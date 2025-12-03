@@ -32,6 +32,21 @@ public static class ModelBuilderExtensions
 
         builder.Entity<User>().Property(u => u.CreatedDate);
         builder.Entity<User>().Property(u => u.UpdatedDate);
+        
+        
+        //One to One: User to EmailAddress
+        builder.Entity<User>()
+            .HasOne(u => u.Email)
+            .WithOne(e => e.User)
+            .HasForeignKey<EmailAddress>(e => e.UserId)
+            .IsRequired();
+        
+        //One to One: User to EmailAddress
+        builder.Entity<User>()
+            .HasOne(u => u.PersonName)
+            .WithOne(e => e.User)
+            .HasForeignKey<PersonName>(e => e.UserId)
+            .IsRequired();
     }
 
 

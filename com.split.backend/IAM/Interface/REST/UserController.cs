@@ -25,6 +25,7 @@ public class UserController(IUserQueryService userQueryService, IUserCommandServ
     {
         var getUserByIdQuery = new GetUsersByIdQuery(id);
         var user = await userQueryService.Handle(getUserByIdQuery);
+        Console.WriteLine(user);
         var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user!);
         return Ok(userResource);
     }

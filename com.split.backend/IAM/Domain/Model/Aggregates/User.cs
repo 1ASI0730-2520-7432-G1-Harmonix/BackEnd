@@ -10,6 +10,7 @@ public partial class User
 {
     [Column("Id")]
     public int Id {  get; set; }
+    
     public EmailAddress Email { get; set; } = new EmailAddress();
     public PersonName PersonName { get; set; } = new PersonName();
     [Column("Password")]
