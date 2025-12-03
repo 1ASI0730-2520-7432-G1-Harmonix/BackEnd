@@ -4,8 +4,15 @@ using com.split.backend.Bills.Domain.Models.Queries;
 using com.split.backend.Bills.Domain.Repositories;
 using com.split.backend.Bills.Domain.Services;
 
-public class BillQueryService(IBillRepository repo) : IBillQueryService
+public class BillQueryService(IBillRepository billRepository) : IBillQueryService
 {
-    public Task<List<Bill>> Handle(GetBillsByHouseholdQuery q) =>
-        repo.ListAsync(q.HouseholdId, q.From, q.To, q.Status);
+    public async Task<IEnumerable<Bill?>> Handle(GetBillsByHouseholdIdQuery query)
+    {
+        return await billRepository.FindByHouseholdIdAsync(query.HouseholdId);
+    }
+
+    public async Task<IEnumerable<Bill?>> Handle(GetAllBillsQuery query)
+    {
+        return await billRepository.ListAsync();
+    }
 }

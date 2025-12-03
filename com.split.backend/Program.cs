@@ -18,18 +18,46 @@ using com.split.backend.IAM.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.IAM.Infrastructure.Pipeline.MiddleWare.Extensions;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Configuration;
 using com.split.backend.IAM.Infrastructure.Tokens.JWT.Services;
+using com.split.backend.Settings.Application.Internal.CommandServices;
+using com.split.backend.Settings.Application.Internal.OutboundServices.ACL;
+using com.split.backend.Settings.Application.Internal.QueryServices;
+using com.split.backend.Settings.Domain.Repositories;
+using com.split.backend.Settings.Domain.Services;
+using com.split.backend.Settings.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration;
 using com.split.backend.Shared.Interfaces.ASP.Configuration;
 using com.split.backend.Bills.Application.ACL;
-using com.split.backend.Bills.Interface.ACL;
-using Cortex.Mediator.Behaviors;
+using com.split.backend.Bills.Interface.ACL;    
+using com.split.backend.HouseholdMembers.Application.ACL;
+using com.split.backend.HouseholdMembers.Application.Internal.CommandServices;
+using com.split.backend.HouseholdMembers.Application.Internal.QueryServices;
+using com.split.backend.HouseholdMembers.Domain.Repositories;
+using com.split.backend.HouseholdMembers.Domain.Services;
+using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.HouseholdMembers.Interface.ACL;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using IUnitOfWork = com.split.backend.Shared.Domain.Repositories.IUnitOfWork;
 using UnitOfWork = com.split.backend.Shared.Infrastructure.Persistence.EFC.Repositories.UnitOfWork;
 using Microsoft.Data.Sqlite;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System.Text;
+using com.split.backend.Contributions.Application.Internal.CommandServices;
+using com.split.backend.Contributions.Application.Internal.QueryServices;
+using com.split.backend.Contributions.Domain.Repositories;
+using com.split.backend.Contributions.Domain.Services;
+using com.split.backend.Contributions.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.MemberContributions.Application.Internal.CommandServices;
+using com.split.backend.MemberContributions.Application.Internal.QueryServices;
+using com.split.backend.MemberContributions.Domain.Repositories;
+using com.split.backend.MemberContributions.Domain.Services;
+using com.split.backend.MemberContributions.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.Shared.Infrastructure.Mediator.Cortex.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +79,8 @@ builder.Services.AddCors(options =>
 });
 
 
-SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
-sqliteConnection.Open();
+/*SqliteConnection? sqliteConnection = new SqliteConnection("DataSource=:memory:");
+sqliteConnection.Open();*/
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -61,16 +89,37 @@ if(connectionString == null) throw new InvalidOperationException("Connection str
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (builder.Environment.IsProduction())
+    /*if (builder.Environment.IsProduction())
     {
-        options.UseNpgsql(connectionString)
+        options.UseSqlite(connectionString)
             .LogTo(Console.WriteLine, LogLevel.Information);
-    }
-    else if (builder.Environment.IsDevelopment())
+    }*/
+    if (builder.Environment.IsDevelopment() || builder.Environment.IsProduction())
     {
-        options.UseSqlite(sqliteConnection)
-            .LogTo(Console.WriteLine, LogLevel.Information);
+        options.UseMySql(
+            connectionString,
+            ServerVersion.AutoDetect(connectionString)
+        )
+        .LogTo(Console.WriteLine, LogLevel.Information);
     }
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    var secret = builder.Configuration["TokenSettings:Secret"]
+                 ?? throw new InvalidOperationException("TokenSettings:Secret configuration is missing.");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 //Learn more about configuring Swagger/OpenApi at https://aka.ms/aspnetcore/swashbuckle
@@ -131,6 +180,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 
+builder.Services.AddScoped<IUserIncomeRepository, UserIncomeRepository>();
+builder.Services.AddScoped<IUserIncomeCommandService, UserIncomeCommandServices>();
+builder.Services.AddScoped<IUserIncomeQueryService, UserIncomeQueryServices>();
+
+
+//MemberContribution BC Injection Configuration
+builder.Services.AddScoped<IMemberContributionRepository, MemberContributionRepository>();
+builder.Services.AddScoped<IMemberContributionCommandService, MemberContributionCommandServices>();
+builder.Services.AddScoped<IMemberContributionQueryService, MemberContributionQueryServices>();
+
+
 // Bills Bounded Context Injection Configuration 
 builder.Services.AddScoped<IBillRepository, BillRepository>();
 builder.Services.AddScoped<IBillCommandService, BillCommandService>();
@@ -142,13 +202,38 @@ builder.Services.AddScoped<IHouseHoldRepository, HouseHoldRepository>();
 builder.Services.AddScoped<IHouseHoldCommandService, HouseHoldCommandService>();
 builder.Services.AddScoped<IHouseHoldQueryService, HouseHoldQueryService>();
 
+//Contribution BoundedContext Injection Configuration
+builder.Services.AddScoped<IContributionRepository, ContributionRepository>();
+builder.Services.AddScoped<IContributionCommandService, ContributionCommandService>();
+builder.Services.AddScoped<IContributionQueryService, ContributionQueryService>();
+
+//Income Allocation Bounded Context Injection Configuration
+builder.Services.AddScoped<IIncomeAllocationRepository, IncomeAllocationRepository>();
+builder.Services.AddScoped<IIncomeAllocationCommandService, IncomeAllocationCommandService>();
+builder.Services.AddScoped<IIncomeAllocationQueryService, IncomeAllocationQueryService>();
+
+// Settings Bounded Context Injection Configuration
+builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+builder.Services.AddScoped<ISettingsCommandService, SettingsCommandService>();
+builder.Services.AddScoped<ISettingsQueryService, SettingsQueryService>();
+builder.Services.AddScoped<IExternalIamService, ExternalIamService>();
+
+// HouseholdMembers Bounded Context Injection Configuration
+builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository>();
+builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
+builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
+
+//
+
+// ACL Facades for HouseholdMembers
+builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
+builder.Services.AddScoped<IUserContextFacade, UserContextFacade>();
 
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
-
 
 //Mediator Configuration
 
@@ -171,14 +256,15 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
 
-    if (app.Environment.IsDevelopment())
-        context.Database.EnsureDeleted();
+    /*if (app.Environment.IsDevelopment())
+        context.Database.EnsureDeleted();*/
     
     context.Database.EnsureCreated();
 }
 
 //Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() ||
+    Environment.GetEnvironmentVariable("RENDER") == "true")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -190,11 +276,13 @@ app.UseCors("AllowAllPolicy");
 //Add Authorization Middleware to Pipeline
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequestAuthorization();
 
-app.UseHttpsRedirection();
+if(app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 
 app.MapControllers();
 

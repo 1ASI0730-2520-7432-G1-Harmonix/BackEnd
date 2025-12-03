@@ -14,5 +14,16 @@ public static class ModelBuilderExtensions
         builder.Entity<HouseHold>().Property(p => p.Currency).IsRequired();
         builder.Entity<HouseHold>().Property(p => p.RepresentativeId).IsRequired();
     }
+
+    public static void ApplyIncomeAllocationConfiguration(this ModelBuilder builder)
+    {
+        builder.Entity<IncomeAllocation>().HasKey(p =>p.Id);
+        builder.Entity<IncomeAllocation>().Property(p => p.Id).IsRequired();
+        builder.Entity<IncomeAllocation>().Property(p => p.UserId).IsRequired();
+        builder.Entity<IncomeAllocation>().Property(p => p.HouseholdId).IsRequired();
+        builder.Entity<IncomeAllocation>().Property(p => p.Percentage).IsRequired();
+        builder.Entity<IncomeAllocation>().Property(p => p.CreatedDate);
+        builder.Entity<IncomeAllocation>().Property(p => p.UpdatedDate);
+    }
     
 }

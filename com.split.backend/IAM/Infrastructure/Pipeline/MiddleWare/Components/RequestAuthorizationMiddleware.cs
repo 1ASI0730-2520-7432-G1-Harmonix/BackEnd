@@ -20,11 +20,12 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
             .Any(m => m.GetType() == typeof(AllowAnonymousAttribute)) ?? false;
         var path = context.Request.Path.Value?.ToLower();
 
-        if (allowAnonymous || 
-            path.Contains("swagger") ||
-            path.Contains("api-docs") ||
-            path.Contains("health") ||
-            path.Contains("index.html"))
+        if (allowAnonymous ||
+            path == "/" ||
+            path.Contains("/swagger") ||
+            path.Contains("/api-docs") ||
+            path.Contains("/health") ||
+            path.Contains("/index.html"))
         {
             Console.WriteLine("Skipping authorization - Middleware");
             await next(context);

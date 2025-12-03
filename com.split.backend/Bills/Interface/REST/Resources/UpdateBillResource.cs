@@ -3,13 +3,7 @@
 namespace com.split.backend.Bills.Interface.REST.Resources;
 
 public record UpdateBillResource(
-
-    string? Title,
-    string? Category,
+    string? Description,
     decimal? Amount,
-    string? Currency,
-    DateOnly? DueDate,
-    EBillStatus? Status,
-    string? Notes
-    
+    string? PaymentDate
 );

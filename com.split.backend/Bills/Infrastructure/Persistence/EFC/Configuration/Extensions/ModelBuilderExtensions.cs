@@ -7,27 +7,17 @@ public static class ModelBuilderExtensions
 {
     public static void ApplyBillsConfiguration(this ModelBuilder builder)
     {
-        builder.Entity<Bill>().HasKey(x => x.Id);
-        
-        builder.Entity<Bill>().Property(x => x.Title)
-            .HasMaxLength(160)
-            .IsRequired();
+        builder.Entity<Bill>().HasKey(b => b.Id);
+        builder.Entity<Bill>().Property(b => b.Id).ValueGeneratedOnAdd();
 
-        builder.Entity<Bill>().Property(x => x.Category)
-            .HasMaxLength(80)
-            .HasDefaultValue("General");
-        
-        builder.Entity<Bill>().Property(x => x.Currency)
-            .HasMaxLength(8)
-            .HasDefaultValue("PEN");
+        builder.Entity<Bill>().Property(b => b.HouseholdId).IsRequired();
+        builder.Entity<Bill>().Property(b => b.Description);
+        builder.Entity<Bill>().Property(b => b.Amount).IsRequired();
+        builder.Entity<Bill>().Property(b => b.CreatedBy).IsRequired();
+        builder.Entity<Bill>().Property(b => b.PaymentDate).IsRequired();
 
-        builder.Entity<Bill>().Property(x => x.Amount)
-            .HasPrecision(18, 2);
-
-        builder.Entity<Bill>().Property(x => x.Status)
-            .HasConversion<int>();
-
-        builder.Entity<Bill>().HasIndex(x => new { x.HouseholdId, x.DueDate });
+        builder.Entity<Bill>().Property(b => b.CreatedDate);
+        builder.Entity<Bill>().Property(b => b.UpdatedDate);
 
     }
 }
