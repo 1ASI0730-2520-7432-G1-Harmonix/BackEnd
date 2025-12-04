@@ -83,11 +83,20 @@ public class ContributionController(
     [SwaggerResponse(400, "The Contribution was not created")]
     public async Task<IActionResult> CreateContribution([FromBody] CreateContributionResource resource)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         var createContributionCommand =  CreateContributionCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var contribution = await contributionCommandService.Handle(createContributionCommand);
-        if(contribution == null) return BadRequest();
-        var contributionResource = ContributionResourceFromEntityAssembler.ToResourceFromEntity(contribution);
-        return CreatedAtAction(nameof(GetContributionById), new { contributionId = contribution.Id}, contributionResource );
+        try
+        {
+            var contribution = await contributionCommandService.Handle(createContributionCommand);
+            if(contribution == null) return BadRequest();
+            var contributionResource = ContributionResourceFromEntityAssembler.ToResourceFromEntity(contribution);
+            return CreatedAtAction(nameof(GetContributionById), new { contributionId = contribution.Id}, contributionResource );
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = e.Message });
+        }
     }
 
 

@@ -12,7 +12,7 @@ public static class CreateContributionCommandFromResourceAssembler
         return new CreateContributionCommand(
             resource.BillId,
             resource.HouseholdId,
-            resource.Description,
+            resource.Description ?? string.Empty,
             resource.DeadlineForMembers,
             resource.Strategy);
     }
