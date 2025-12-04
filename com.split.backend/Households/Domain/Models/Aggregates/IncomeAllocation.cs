@@ -12,31 +12,42 @@ public partial class IncomeAllocation
 
     public IncomeAllocation()
     {
-        this.Id = Guid.NewGuid().ToString();
+        this.Id = $"IA-{Guid.NewGuid()}";
         this.UserId = -1;
         this.HouseholdId = string.Empty;
         this.Percentage = 0;
-        this.CreatedDate = DateTime.Now;
-        this.UpdatedDate = DateTime.Now;
+        this.CreatedDate = DateTimeOffset.UtcNow;
+        this.UpdatedDate = DateTimeOffset.UtcNow;
     }
 
     public IncomeAllocation(long userId, string householdId, Decimal percentage)
     {
-        this.Id = "IA" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        this.Id = $"IA-{Guid.NewGuid()}";
         this.UserId = userId;
         this.HouseholdId = householdId;
         this.Percentage = percentage;
-        this.CreatedDate = DateTime.Now;
-        this.UpdatedDate = DateTime.Now;
+        this.CreatedDate = DateTimeOffset.UtcNow;
+        this.UpdatedDate = DateTimeOffset.UtcNow;
     }
 
     public IncomeAllocation(CreateIncomeAllocationCommand command)
     {
-        this.Id = "IA" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        this.Id = $"IA-{Guid.NewGuid()}";
         this.UserId = command.UserId;
         this.HouseholdId = command.HouseholdId;
         this.Percentage = command.Percentage;
-        this.CreatedDate = this.UpdatedDate=DateTime.Now ;
+        this.CreatedDate = DateTimeOffset.UtcNow;
+        this.UpdatedDate = DateTimeOffset.UtcNow ;
+    }
+
+    public IncomeAllocation(IncomeAllocationUpsertCommand command)
+    {
+        this.Id = $"IA-{Guid.NewGuid()}";
+        this.UserId = command.UserId;
+        this.HouseholdId = command.HouseholdId;
+        this.Percentage = command.Percentage;
+        this.CreatedDate = DateTimeOffset.UtcNow;
+        this.UpdatedDate = DateTimeOffset.UtcNow;
     }
 
     public IncomeAllocation Update(UpdateIncomeAllocationCommand command)
@@ -44,6 +55,7 @@ public partial class IncomeAllocation
         if(command.UserId != null) this.UserId = (long)command.UserId;
         if(!string.IsNullOrWhiteSpace(command.HouseholdId)) this.HouseholdId = command.HouseholdId;
         if(command.Percentage != null) this.Percentage = (decimal)command.Percentage;
+        this.UpdatedDate = DateTimeOffset.UtcNow;
 
         return this;
     }

@@ -12,7 +12,12 @@ public static class HouseholdResourceFromEntityAssembler
         return new HouseHoldResource(
             entity.Id,
             entity.Name,
+            entity.Description ?? string.Empty,
+            entity.MemberCount,
             entity.RepresentativeId,
-            ((int)entity.Currency).ToString());
+            entity.Currency.ToString(),
+            entity.StartDate?.ToString("O") ?? string.Empty,
+            entity.CreatedDate?.ToString("O") ?? string.Empty,
+            entity.UpdatedDate?.ToString("O") ?? string.Empty);
     }
 }

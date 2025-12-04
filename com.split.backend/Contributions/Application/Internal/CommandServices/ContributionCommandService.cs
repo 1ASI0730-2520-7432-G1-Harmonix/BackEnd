@@ -14,6 +14,9 @@ public class ContributionCommandService(IContributionRepository contributionRepo
 {
     public async Task<Contribution?> Handle(CreateContributionCommand command)
     {
+        if (string.IsNullOrWhiteSpace(command.BillId) || string.IsNullOrWhiteSpace(command.HouseholdId))
+            throw new ArgumentException("BillId and HouseholdId are required");
+
         var contribution = new Contribution(command);
         
         if(contributionRepository.ExistsById(contribution.Id)) throw new Exception("Contribution already exists");

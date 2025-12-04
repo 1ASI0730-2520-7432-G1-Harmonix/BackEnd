@@ -7,12 +7,13 @@ public static class CreateHouseholdMemberCommandFromResourceAssembler
 {
     public static CreateHouseholdMemberCommand ToCommandFromResource(CreateHouseholdMemberResource resource)
     {
-        ArgumentNullException.ThrowIfNull(resource);
+        if (resource is null) throw new ArgumentNullException(nameof(resource));
 
         return new CreateHouseholdMemberCommand(
             resource.HouseholdId,
             resource.UserId,
-            resource.IsRepresentative);
+            resource.IsRepresentative,
+            resource.Income
+        );
     }
 }
-

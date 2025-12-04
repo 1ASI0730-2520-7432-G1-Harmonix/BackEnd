@@ -10,7 +10,7 @@ public static class UpdateUserIncomeCommandFromResourceAssembler
         if(resource is null) throw new ArgumentNullException(nameof(resource));
 
         return new UpdateUserIncomeCommand(
-            resource.Id,
+            Id,
             resource.Income);
     }
     

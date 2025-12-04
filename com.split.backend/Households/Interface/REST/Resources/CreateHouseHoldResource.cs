@@ -1,4 +1,12 @@
 ﻿namespace com.split.backend.Households.Interface.REST.Resources;
 
 public record CreateHouseHoldResource(
-    string Name, long RepresentativeId ,string Currency, string Description, int MemberCount);
+    string? Id,
+    string Name,
+    long RepresentativeId,
+    string Currency,
+    string? Description,
+    int? MemberCount,
+    DateTime? StartDate,
+    DateTime? CreatedAt,
+    DateTime? UpdatedAt);

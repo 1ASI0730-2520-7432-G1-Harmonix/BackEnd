@@ -3,4 +3,4 @@
 public record CreatedUserIncomeResource(
     string Id,
     long UserId,
-    string Income);
+    decimal Income);

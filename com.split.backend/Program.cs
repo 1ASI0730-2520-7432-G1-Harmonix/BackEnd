@@ -35,6 +35,11 @@ using com.split.backend.HouseholdMembers.Domain.Repositories;
 using com.split.backend.HouseholdMembers.Domain.Services;
 using com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
 using com.split.backend.HouseholdMembers.Interface.ACL;
+using com.split.backend.Invitations.Application.Internal.CommandServices;
+using com.split.backend.Invitations.Application.Internal.QueryServices;
+using com.split.backend.Invitations.Domain.Repositories;
+using com.split.backend.Invitations.Domain.Services;
+using com.split.backend.Invitations.Infrastructure.Persistence.EFC.Repositories;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -223,7 +228,10 @@ builder.Services.AddScoped<IHouseholdMemberRepository, HouseholdMemberRepository
 builder.Services.AddScoped<IHouseholdMemberCommandService, HouseholdMemberCommandService>();
 builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQueryService>();
 
-//
+// Invitations Bounded Context
+builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
+builder.Services.AddScoped<IInvitationCommandService, InvitationCommandService>();
+builder.Services.AddScoped<IInvitationQueryService, InvitationQueryService>();
 
 // ACL Facades for HouseholdMembers
 builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
@@ -256,10 +264,11 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
 
-    /*if (app.Environment.IsDevelopment())
-        context.Database.EnsureDeleted();*/
+    if (app.Environment.IsDevelopment())
+        context.Database.EnsureDeleted();
     
     context.Database.EnsureCreated();
+
 }
 
 //Configure the HTTP request pipeline

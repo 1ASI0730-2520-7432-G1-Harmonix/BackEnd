@@ -61,6 +61,22 @@ public class MemberContributionController(
         return Ok(contributionResources);
         
     }
+
+    [HttpPost]
+    [SwaggerOperation("Create MemberContribution", OperationId = "CreateMemberContribution")]
+    [SwaggerResponse(201, "The MemberContribution was created", typeof(MemberContributionResource))]
+    [SwaggerResponse(400, "The MemberContribution was invalid")]
+    public async Task<IActionResult> CreateMemberContribution([FromBody] CreateMemberContributionResource resource)
+    {
+        if (resource is null) return BadRequest();
+
+        var command = CreateMemberContributionFromResourceAssembler.ToCommandFromResource(resource);
+        var contribution = await memberContributionCommandService.Handle(command);
+        if (contribution is null) return BadRequest();
+
+        var contributionResource = MemberContributionFromEntityAssembler.ToResourceFromEntity(contribution);
+        return CreatedAtAction(nameof(GetMemberContributionByContributionId), new { contributionId = contributionResource.ContributionId }, contributionResource);
+    }
    
     
 

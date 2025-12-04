@@ -6,9 +6,10 @@ namespace com.split.backend.MemberContributions.Interface.REST.Transform;
 
 public static class CreateMemberContributionFromResourceAssembler
 {
-    public static CreateMemberContributionCommand ToCommandFromResource(MemberContribution entity)
+    public static CreateMemberContributionCommand ToCommandFromResource(CreateMemberContributionResource resource)
     {
-        return new CreateMemberContributionCommand(entity.ContributionId, entity.MemberId, entity.Amount);
+        if (resource is null) throw new ArgumentNullException(nameof(resource));
+        return new CreateMemberContributionCommand(resource.ContributionId, resource.MemberId, resource.Amount);
     }
     
 }

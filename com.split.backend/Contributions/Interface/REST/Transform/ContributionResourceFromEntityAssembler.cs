@@ -12,7 +12,7 @@ public static class ContributionResourceFromEntityAssembler
             entity.BillId,
             entity.HouseholdId,
             entity.Description,
-            entity.DeadlineForMembers.ToString(),
-            (int)entity.Strategy);
+            entity.DeadlineForMembers?.ToString("O") ?? string.Empty,
+            entity.Strategy.HasValue ? (int)entity.Strategy.Value : 0);
     }
 }

@@ -9,7 +9,9 @@ public static class BillResourceFromEntityAssembler
     {
         return new BillResource(entity.Id, entity.HouseholdId,
             entity.Description, entity.Amount, entity.CreatedBy, 
-            entity.PaymentDate?.ToShortDateString());
+            entity.PaymentDate?.ToString("O") ?? string.Empty,
+            entity.CreatedDate?.ToString("O") ?? string.Empty,
+            entity.UpdatedDate?.ToString("O") ?? string.Empty);
     }
     
 }

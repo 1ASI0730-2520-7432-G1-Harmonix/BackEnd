@@ -17,7 +17,10 @@ public static class HouseholdMemberResourceFromEntityAssembler
             entity.HouseholdId,
             entity.UserId,
             entity.IsRepresentative,
-            entity.JoinedAt);
+            entity.JoinedAt,
+            entity.Income,
+            entity.CreatedAt,
+            entity.UpdatedAt);
     }
 }
 
