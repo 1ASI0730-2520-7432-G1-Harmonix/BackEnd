@@ -52,6 +52,8 @@ using com.split.backend.Contributions.Application.Internal.QueryServices;
 using com.split.backend.Contributions.Domain.Repositories;
 using com.split.backend.Contributions.Domain.Services;
 using com.split.backend.Contributions.Infrastructure.Persistence.EFC.Repositories;
+using com.split.backend.IAM.Application.Internal.OutboundServices.ACL;
+using com.split.backend.IAM.Interface.OutboundServices.ACL;
 using com.split.backend.MemberContributions.Application.Internal.CommandServices;
 using com.split.backend.MemberContributions.Application.Internal.QueryServices;
 using com.split.backend.MemberContributions.Domain.Repositories;
@@ -227,6 +229,8 @@ builder.Services.AddScoped<IHouseholdMemberQueryService, HouseholdMemberQuerySer
 
 // ACL Facades for HouseholdMembers
 builder.Services.AddScoped<IHouseholdContextFacade, HouseholdContextFacade>();
+builder.Services.AddHttpClient<IExternalHouseHoldService, ExternalHouseHoldService>(
+    c => c.BaseAddress = new Uri("http://localhost:5070/"));
 builder.Services.AddScoped<IUserContextFacade, UserContextFacade>();
 
 // TokenSettings Configuration
