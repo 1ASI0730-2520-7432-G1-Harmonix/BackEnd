@@ -1,10 +1,11 @@
-﻿using com.split.backend.Households.Domain.Models.Aggregates;
+using com.split.backend.HouseholdMembers.Domain.Models.Aggregates;
+using com.split.backend.HouseholdMembers.Domain.Repositories;
+using com.split.backend.Households.Domain.Models.Aggregates;
 using com.split.backend.Households.Domain.Models.Commands;
 using com.split.backend.Households.Domain.Repositories;
 using com.split.backend.Households.Domain.Services;
-using com.split.backend.IAM.Domain.Model.Aggregates;
-using com.split.backend.IAM.Domain.Repositories;
 using com.split.backend.IAM.Domain.Model.ValueObjects;
+using com.split.backend.IAM.Domain.Repositories;
 using com.split.backend.Shared.Domain.Repositories;
 
 namespace com.split.backend.Households.Application.CommandServices;
@@ -12,8 +13,9 @@ namespace com.split.backend.Households.Application.CommandServices;
 public class HouseHoldCommandService(
     IHouseHoldRepository houseHoldRepository,
     IUserRepository userRepository,
+    IHouseholdMemberRepository householdMemberRepository,
     IUnitOfWork unitOfWork
-    ) : IHouseHoldCommandService
+) : IHouseHoldCommandService
 {
     public async Task<HouseHold?> Handle(CreateHouseholdCommand command)
     {
@@ -38,6 +40,19 @@ public class HouseHoldCommandService(
         try
         {
             await houseHoldRepository.AddAsync(household);
+            await unitOfWork.CompleteAsync();
+
+            // Auto-create representative as household member
+            var currentCount = await householdMemberRepository.CountByHouseholdIdAsync(household.Id);
+            if (currentCount >= household.MemberCount)
+                throw new InvalidOperationException("El household ha alcanzado el número máximo de miembros permitidos.");
+
+            if (!await householdMemberRepository.ExistsByHouseholdIdAndUserIdAsync(household.Id, (int)rep.Id))
+            {
+                var repMember = new HouseholdMember(household.Id, (int)rep.Id, true, 0m);
+                await householdMemberRepository.AddAsync(repMember);
+            }
+
             await unitOfWork.CompleteAsync();
             return household;
         }
@@ -68,9 +83,6 @@ public class HouseHoldCommandService(
         return household;
     }
 
-
-    
-
     public async Task<bool> Handle(DeleteHouseHoldCommand command)
     {
         var household = await houseHoldRepository.FindByStringIdAsync(command.Id);
@@ -81,6 +93,4 @@ public class HouseHoldCommandService(
 
         return true;
     }
-    
-    
 }

@@ -49,20 +49,24 @@ public class UserCommandService(
             throw new Exception("Email already exists");
 
         var hashedPassword = hashingService.HashPassword(command.Password);
-        var role = Enum.Parse<Role>(command.Role);
+        if (!Enum.TryParse<Role>(command.Role, true, out var role))
+            throw new Exception("Invalid role");
 
         if (role == Role.Member && !string.IsNullOrWhiteSpace(command.HouseholdId))
         {
+            // Validar invitación si existe, pero no bloquear el alta de miembro si la invitación no es requerida
             var invitation = await invitationRepository.FindPendingAsync(command.EmailAddress, command.HouseholdId);
-            if (invitation == null || invitation.ExpiresAt < DateTime.UtcNow)
-                throw new Exception("Invitation not found or expired.");
+            if (invitation != null && invitation.ExpiresAt < DateTime.UtcNow)
+                throw new Exception("Invitation expired.");
 
-            // validate household exists and capacity
+            // validar household existe y cupo
             var household = await houseHoldRepository.FindByStringIdAsync(command.HouseholdId);
             if (household == null) throw new Exception("Household not found.");
-            var currentMembers = await householdMemberRepository.FindByHouseholdIdAsync(command.HouseholdId);
-            var count = currentMembers.Count();
-            if (household.MemberCount > 0 && count >= household.MemberCount)
+            var currentMembers = await householdMemberRepository.CountByHouseholdIdAsync(command.HouseholdId);
+            var pendingInvites = await invitationRepository.CountPendingByHouseholdIdAsync(command.HouseholdId);
+            // Si hay invitaci�n para este email/household, descuenta 1 de los pendientes para permitir su alta
+            var pendingForLimit = Math.Max(0, pendingInvites - (invitation != null ? 1 : 0));
+            if (household.MemberCount > 0 && (currentMembers + pendingForLimit) >= household.MemberCount)
                 throw new Exception("Household member limit reached.");
 
             var user = new User(command,  hashedPassword)
@@ -74,11 +78,18 @@ public class UserCommandService(
             await userRepository.AddAsync(user);
             await unitOfWork.CompleteAsync();
 
+            // Crear el registro en household_member siempre que el usuario se una a un household
             var member = new HouseholdMembers.Domain.Models.Aggregates.HouseholdMember(command.HouseholdId, user.Id, false);
             await householdMemberRepository.AddAsync(member);
-            invitation.Status = InvitationStatus.Accepted;
-            invitation.UpdatedDate = DateTime.UtcNow;
-            invitationRepository.Update(invitation);
+
+            // Si había invitación pendiente, marcarla como aceptada
+            if (invitation != null)
+            {
+                invitation.Status = InvitationStatus.Accepted;
+                invitation.UpdatedDate = DateTime.UtcNow;
+                invitationRepository.Update(invitation);
+            }
+
             await unitOfWork.CompleteAsync();
             return;
         }

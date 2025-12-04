@@ -1,9 +1,12 @@
 namespace com.split.backend.HouseholdMembers.Interface.REST.Resources;
 
 public record HouseholdMemberResource(
-    int Id,
+    string Id,
     string HouseholdId,
     int UserId,
     bool IsRepresentative,
-    DateTime JoinedAt
+    DateTime JoinedAt,
+    decimal Income,
+    DateTime CreatedAt,
+    DateTime UpdatedAt
 );

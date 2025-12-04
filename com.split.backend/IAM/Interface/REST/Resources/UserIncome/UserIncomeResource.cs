@@ -3,6 +3,6 @@
 public record UserIncomeResource(
     string Id,
     long UserId,
-    string Income,
+    decimal Income,
     string CreatedDate,
     string UpdatedDate);

@@ -29,4 +29,18 @@ public class InvitationRepository(AppDbContext context) : IInvitationRepository
         return await context.Set<Invitation>()
             .AnyAsync(i => i.Email == email && i.HouseholdId == householdId && i.Status == InvitationStatus.Pending);
     }
+
+    public async Task<IEnumerable<Invitation>> FindPendingByHouseholdIdAsync(string householdId)
+    {
+        return await context.Set<Invitation>()
+            .Where(i => i.HouseholdId == householdId && i.Status == InvitationStatus.Pending)
+            .ToListAsync();
+    }
+
+    public async Task<int> CountPendingByHouseholdIdAsync(string householdId)
+    {
+        return await context.Set<Invitation>()
+            .Where(i => i.HouseholdId == householdId && i.Status == InvitationStatus.Pending)
+            .CountAsync();
+    }
 }

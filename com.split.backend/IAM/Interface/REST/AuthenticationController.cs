@@ -32,9 +32,16 @@ public class AuthenticationController(IUserCommandService userCommandService) : 
     [AllowAnonymous]
     public async Task<IActionResult> SignUp([FromBody] SignUpResource signUpResource)
     {
-        var signUpCommand = SignUpCommandFromResourceAssembler.ToCommandFromResource(signUpResource);
-        await userCommandService.Handle(signUpCommand);
-        return Ok(new { message = "Signed up successfully" });
+        try
+        {
+            var signUpCommand = SignUpCommandFromResourceAssembler.ToCommandFromResource(signUpResource);
+            await userCommandService.Handle(signUpCommand);
+            return Ok(new { message = "Signed up successfully" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
     
 }

@@ -268,6 +268,7 @@ using (var scope = app.Services.CreateScope())
         context.Database.EnsureDeleted();*/
     
     context.Database.EnsureCreated();
+
 }
 
 //Configure the HTTP request pipeline

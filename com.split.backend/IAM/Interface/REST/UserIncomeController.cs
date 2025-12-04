@@ -11,7 +11,7 @@ namespace com.split.backend.IAM.Interface.REST;
 
 [ApiController]
 [Authorize]
-[Route("api/v1/[controller]")]
+[Route("api/v1/user-income")]
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag( "Available UserIncome Endpoints")]
 public class UserIncomeController(
@@ -64,7 +64,7 @@ public class UserIncomeController(
         var getUserIncomeByUserIdQuery = new GetUserIncomeByUserIdQuery(userId);
         
         var userIncome = await userIncomeQueryService.Handle(getUserIncomeByUserIdQuery);
-        if(userIncome is null) return NotFound();
+        if(userIncome is null) return NoContent();
 
         var userIncomeResource = UserIncomeResourceFromEntityAssembler.ToResourceFromEntity(userIncome);
         return Ok(userIncomeResource);

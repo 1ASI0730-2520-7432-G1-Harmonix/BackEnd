@@ -8,7 +8,7 @@ namespace com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repo
 
 public class HouseholdMemberRepository(AppDbContext context) : BaseRepository<HouseholdMember>(context), IHouseholdMemberRepository
 {
-    public async Task<HouseholdMember?> FindByIdAsync(int id)
+    public async Task<HouseholdMember?> FindByIdAsync(string id)
     {
         return await Context.Set<HouseholdMember>().FirstOrDefaultAsync(m => m.Id == id);
     }
@@ -17,6 +17,13 @@ public class HouseholdMemberRepository(AppDbContext context) : BaseRepository<Ho
     {
         return await Context.Set<HouseholdMember>()
             .FirstOrDefaultAsync(m => m.HouseholdId == householdId && m.UserId == userId);
+    }
+
+    public async Task<bool> ExistsByHouseholdIdAndUserIdAsync(string householdId, int userId)
+    {
+        return await Context.Set<HouseholdMember>()
+            .AsNoTracking()
+            .AnyAsync(m => m.HouseholdId == householdId && m.UserId == userId);
     }
 
     public async Task<IEnumerable<HouseholdMember>> FindByHouseholdIdAsync(string householdId)
@@ -45,5 +52,12 @@ public class HouseholdMemberRepository(AppDbContext context) : BaseRepository<Ho
     {
         return Context.Set<HouseholdMember>()
             .Any(m => m.HouseholdId == householdId && m.UserId == userId);
+    }
+
+    public async Task<int> CountByHouseholdIdAsync(string householdId)
+    {
+        return await Context.Set<HouseholdMember>()
+            .AsNoTracking()
+            .CountAsync(m => m.HouseholdId == householdId);
     }
 }

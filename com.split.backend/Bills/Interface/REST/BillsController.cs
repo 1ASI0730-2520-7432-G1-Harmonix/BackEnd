@@ -50,6 +50,27 @@ public class BillsController(
         return Ok(billResources);
     }
 
+    [HttpPost]
+    [SwaggerOperation("Create Bill", OperationId = "CreateBill")]
+    [SwaggerResponse(201, "The bill was created", typeof(BillResource))]
+    [SwaggerResponse(400, "The bill was invalid")]
+    public async Task<IActionResult> CreateBill([FromBody] CreateBillResource resource)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
+        {
+            var command = CreateBillCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var bill = await billCommandService.Handle(command);
+            if (bill is null) return BadRequest(new { message = "Invalid data" });
+            var billResource = BillResourceFromEntityAssembler.ToResourceFromEntity(bill);
+            return CreatedAtAction(nameof(GetBillsByHousehold), new { householdId = bill.HouseholdId }, billResource);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = e.Message });
+        }
+    }
+
     [HttpPut("byId/{id}")]
     [SwaggerOperation("Update Bill", OperationId = "UpdateBill")]
     [SwaggerResponse(200, "The bill was successfully updated", typeof(BillResource))]

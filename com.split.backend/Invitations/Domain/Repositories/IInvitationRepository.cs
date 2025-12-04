@@ -8,4 +8,6 @@ public interface IInvitationRepository
     void Update(Invitation invitation);
     Task<Invitation?> FindPendingAsync(string email, string householdId);
     Task<bool> ExistsPendingAsync(string email, string householdId);
+    Task<IEnumerable<Invitation>> FindPendingByHouseholdIdAsync(string householdId);
+    Task<int> CountPendingByHouseholdIdAsync(string householdId);
 }

@@ -12,7 +12,8 @@ public static class CreateHouseholdMemberCommandFromResourceAssembler
         return new CreateHouseholdMemberCommand(
             resource.HouseholdId,
             resource.UserId,
-            resource.IsRepresentative
+            resource.IsRepresentative,
+            resource.Income
         );
     }
 }

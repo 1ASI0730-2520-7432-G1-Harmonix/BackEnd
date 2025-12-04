@@ -18,12 +18,14 @@ public static class ModelBuilderExtensions
     public static void ApplyIncomeAllocationConfiguration(this ModelBuilder builder)
     {
         builder.Entity<IncomeAllocation>().HasKey(p =>p.Id);
-        builder.Entity<IncomeAllocation>().Property(p => p.Id).IsRequired();
+        builder.Entity<IncomeAllocation>().Property(p => p.Id).IsRequired().ValueGeneratedNever();
         builder.Entity<IncomeAllocation>().Property(p => p.UserId).IsRequired();
         builder.Entity<IncomeAllocation>().Property(p => p.HouseholdId).IsRequired();
-        builder.Entity<IncomeAllocation>().Property(p => p.Percentage).IsRequired();
-        builder.Entity<IncomeAllocation>().Property(p => p.CreatedDate);
-        builder.Entity<IncomeAllocation>().Property(p => p.UpdatedDate);
+        builder.Entity<IncomeAllocation>().Property(p => p.Percentage)
+            .IsRequired()
+            .HasColumnType("decimal(18,2)");
+        builder.Entity<IncomeAllocation>().Property(p => p.CreatedDate).IsRequired();
+        builder.Entity<IncomeAllocation>().Property(p => p.UpdatedDate).IsRequired();
     }
     
 }
