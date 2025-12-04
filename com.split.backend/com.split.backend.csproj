@@ -60,7 +60,6 @@
       <Folder Include="HouseholdMembers\Domain\" />
       <Folder Include="HouseholdMembers\Infrastructure\" />
       <Folder Include="HouseholdMembers\Interface\" />
-      <Folder Include="Households\Application\OurboundServices\" />
       <Folder Include="MemberContributions\Application\ACL\" />
       <Folder Include="Resources\" />
       <Folder Include="Settings\Application\" />
