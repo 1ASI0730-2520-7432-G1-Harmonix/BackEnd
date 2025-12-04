@@ -91,7 +91,7 @@ public class ContributionController(
             var contribution = await contributionCommandService.Handle(createContributionCommand);
             if(contribution == null) return BadRequest();
             var contributionResource = ContributionResourceFromEntityAssembler.ToResourceFromEntity(contribution);
-            return CreatedAtAction(nameof(GetContributionById), new { contributionId = contribution.Id}, contributionResource );
+            return CreatedAtAction(nameof(GetContributionById), new { id = contribution.Id}, contributionResource );
         }
         catch (Exception e)
         {
