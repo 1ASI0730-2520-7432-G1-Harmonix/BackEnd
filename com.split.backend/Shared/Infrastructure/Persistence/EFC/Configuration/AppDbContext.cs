@@ -3,9 +3,12 @@ using com.split.backend.Bills.Infrastructure.Persistence.EFC.Configuration.Exten
 using com.split.backend.Contributions.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.Households.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Invitations.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using com.split.backend.MemberContributions.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Invitations.Domain.Models.Aggregates;
 using com.split.backend.Settings.Domain.Models.Aggregates;
 using com.split.backend.Settings.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using com.split.backend.Households.Domain.Models.Aggregates;
 using com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +18,8 @@ namespace com.split.backend.Shared.Infrastructure.Persistence.EFC.Configuration;
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Setting> Settings => Set<Setting>();
+    public DbSet<Invitation> Invitations => Set<Invitation>();
+    public DbSet<IncomeAllocation> IncomeAllocations => Set<IncomeAllocation>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
@@ -33,6 +38,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         
         //HouseHold Context
         builder.ApplyHouseHoldConfiguration();
+        builder.ApplyIncomeAllocationConfiguration();
         
         //Contributions Context
         builder.ApplyContributionsConfiguration();
@@ -42,16 +48,20 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         
         //Settings Context
         builder.ApplySettingsConfiguration();
-        
-        //Income-Allocation Context
-        
+        //User income Context
         builder.ApplyUserIncomeConfiguration();
         
         //Household-Member Context
         builder.ApplyHouseholdMemberConfiguration();
         
+        // Invitations Context
+        builder.ApplyInvitationConfiguration();
+        
         //Bills Context
         builder.ApplyBillsConfiguration();
+
+        // Invitations Context
+        builder.ApplyInvitationConfiguration();
         
         
         //General Naming Convention for the db objects

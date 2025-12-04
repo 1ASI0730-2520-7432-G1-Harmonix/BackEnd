@@ -1,10 +1,14 @@
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using com.split.backend.HouseholdMembers.Domain.Models.Queries;
 using com.split.backend.HouseholdMembers.Domain.Services;
 using com.split.backend.HouseholdMembers.Interface.REST.Resources;
 using com.split.backend.HouseholdMembers.Interface.REST.Transform;
+using com.split.backend.IAM.Domain.Repositories;
+using com.split.backend.MemberContributions.Domain.Repositories;
+using com.split.backend.Invitations.Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace com.split.backend.HouseholdMembers.Interface.REST;
@@ -15,13 +19,17 @@ namespace com.split.backend.HouseholdMembers.Interface.REST;
 [Produces(MediaTypeNames.Application.Json)]
 public class HouseholdMemberController(
     IHouseholdMemberCommandService commandService,
-    IHouseholdMemberQueryService queryService) : ControllerBase
+    IHouseholdMemberQueryService queryService,
+    IUserRepository userRepository,
+    IMemberContributionRepository memberContributionRepository,
+    IInvitationRepository invitationRepository,
+    ILogger<HouseholdMemberController> logger) : ControllerBase
 {
     [HttpPost]
     [SwaggerOperation("Create Household Member", "Creates a new household member")]
     [SwaggerResponse(201, "The household member has been created")]
     [SwaggerResponse(400, "The household member was not created")]
-    public async Task<IActionResult> CreateHouseholdMember(CreateHouseholdMemberResource resource)
+    public async Task<IActionResult> CreateHouseholdMember([FromBody] CreateHouseholdMemberResource resource)
     {
         try
         {
@@ -33,6 +41,7 @@ public class HouseholdMemberController(
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Error creating household member with payload {@Payload}", resource);
             return BadRequest(new { message = ex.Message });
         }
     }
@@ -41,7 +50,7 @@ public class HouseholdMemberController(
     [SwaggerOperation("Get Household Member By Id", "Get a household member by its unique identifier")]
     [SwaggerResponse(200, "The household member was found and returned", typeof(HouseholdMemberResource))]
     [SwaggerResponse(404, "The household member was not found")]
-    public async Task<IActionResult> GetHouseholdMemberById(int id)
+    public async Task<IActionResult> GetHouseholdMemberById(string id)
     {
         var query = new GetHouseholdMemberByIdQuery(id);
         var member = await queryService.Handle(query);
@@ -59,6 +68,54 @@ public class HouseholdMemberController(
         var members = await queryService.Handle(query);
         var memberResources = members.Select(HouseholdMemberResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(memberResources);
+    }
+
+    [HttpGet("household/{householdId}/detailed")]
+    [SwaggerOperation("Get detailed household members by household Id", "Get members with user and contribution info")]
+    [SwaggerResponse(200, "The household members were found and returned")]
+    public async Task<IActionResult> GetDetailedMembersByHouseholdId(string householdId)
+    {
+        var query = new GetHouseholdMembersByHouseholdIdQuery(householdId);
+        var members = await queryService.Handle(query);
+
+        var detailed = new List<MemberDetailedResource>();
+
+        foreach (var m in members)
+        {
+            var user = await userRepository.FindByIdAsync(m.UserId);
+            var contributions = await memberContributionRepository.FindByMemberIdAsync(m.Id.ToString());
+            var total = contributions.Where(c => c != null).Sum(c => c!.Amount);
+            var status = user?.Status == true ? "Active" : "Inactive";
+            var name = user?.PersonName?.FirstName ?? user?.PersonName?.ToString() ?? string.Empty;
+            detailed.Add(new MemberDetailedResource(
+                m.Id,
+                m.UserId,
+                name,
+                user?.Email?.Address ?? string.Empty,
+                user?.Role.ToString() ?? "Member",
+                status,
+                total,
+                m.IsRepresentative,
+                m.JoinedAt));
+        }
+
+        // Pending invitations without user yet
+        var pendingInvites = await invitationRepository.FindPendingByHouseholdIdAsync(householdId);
+        foreach (var inv in pendingInvites)
+        {
+            detailed.Add(new MemberDetailedResource(
+                string.Empty,
+                0,
+                string.Empty,
+                inv.Email,
+                "Member",
+                "Pending",
+                0,
+                false,
+                inv.CreatedDate));
+        }
+
+        return Ok(detailed);
     }
 
     [HttpGet("user/{userId}")]
@@ -87,10 +144,11 @@ public class HouseholdMemberController(
     [SwaggerOperation("Update Household Member", "Updates a household member")]
     [SwaggerResponse(200, "The household member was updated")]
     [SwaggerResponse(404, "The household member was not found")]
-    public async Task<IActionResult> UpdateHouseholdMember(int id, UpdateHouseholdMemberResource resource)
+    public async Task<IActionResult> UpdateHouseholdMember(string id, [FromBody] UpdateHouseholdMemberResource resource)
     {
         try
         {
+            logger.LogInformation("Updating household member {HouseholdMemberId} with payload {@Payload}", id, resource);
             var updateCommand = UpdateHouseholdMemberCommandFromResourceAssembler.ToCommandFromResource(id, resource);
             var member = await commandService.Handle(updateCommand);
             if (member is null) return NotFound();
@@ -107,7 +165,7 @@ public class HouseholdMemberController(
     [SwaggerOperation("Delete Household Member", "Deletes a household member")]
     [SwaggerResponse(200, "The household member was deleted")]
     [SwaggerResponse(404, "The household member was not found")]
-    public async Task<IActionResult> DeleteHouseholdMember(int id)
+    public async Task<IActionResult> DeleteHouseholdMember(string id)
     {
         var command = new Domain.Models.Commands.DeleteHouseholdMemberCommand(id);
         var result = await commandService.Handle(command);
@@ -119,7 +177,7 @@ public class HouseholdMemberController(
     [SwaggerOperation("Promote To Representative", "Promotes a household member to representative")]
     [SwaggerResponse(200, "The household member was promoted to representative")]
     [SwaggerResponse(404, "The household member was not found")]
-    public async Task<IActionResult> PromoteToRepresentative(int id)
+    public async Task<IActionResult> PromoteToRepresentative(string id)
     {
         try
         {
@@ -139,7 +197,7 @@ public class HouseholdMemberController(
     [SwaggerOperation("Demote Representative", "Demotes a representative to regular member")]
     [SwaggerResponse(200, "The representative was demoted")]
     [SwaggerResponse(404, "The household member was not found")]
-    public async Task<IActionResult> DemoteRepresentative(int id)
+    public async Task<IActionResult> DemoteRepresentative(string id)
     {
         try
         {
@@ -155,4 +213,5 @@ public class HouseholdMemberController(
         }
     }
 }
+
 

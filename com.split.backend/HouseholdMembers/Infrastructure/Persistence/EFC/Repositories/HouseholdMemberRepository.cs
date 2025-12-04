@@ -6,10 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace com.split.backend.HouseholdMembers.Infrastructure.Persistence.EFC.Repositories;
 
-public class HouseholdMemberRepository(AppDbContext context) 
-    : BaseRepository<HouseholdMember>(context), IHouseholdMemberRepository
+public class HouseholdMemberRepository(AppDbContext context) : BaseRepository<HouseholdMember>(context), IHouseholdMemberRepository
 {
-    public async Task<HouseholdMember?> FindByIdAsync(int id)
+    public async Task<HouseholdMember?> FindByIdAsync(string id)
     {
         return await Context.Set<HouseholdMember>().FirstOrDefaultAsync(m => m.Id == id);
     }
@@ -20,18 +19,27 @@ public class HouseholdMemberRepository(AppDbContext context)
             .FirstOrDefaultAsync(m => m.HouseholdId == householdId && m.UserId == userId);
     }
 
-    public async Task<IEnumerable<HouseholdMember>> FindByHouseholdIdAsync(string householdId)
+    public async Task<bool> ExistsByHouseholdIdAndUserIdAsync(string householdId, int userId)
     {
         return await Context.Set<HouseholdMember>()
+            .AsNoTracking()
+            .AnyAsync(m => m.HouseholdId == householdId && m.UserId == userId);
+    }
+
+    public async Task<IEnumerable<HouseholdMember>> FindByHouseholdIdAsync(string householdId)
+    {
+        var list = await Context.Set<HouseholdMember>()
             .Where(m => m.HouseholdId == householdId)
             .ToListAsync();
+        return list;
     }
 
     public async Task<IEnumerable<HouseholdMember>> FindByUserIdAsync(int userId)
     {
-        return await Context.Set<HouseholdMember>()
+        var list = await Context.Set<HouseholdMember>()
             .Where(m => m.UserId == userId)
             .ToListAsync();
+        return list;
     }
 
     public async Task<HouseholdMember?> FindRepresentativeByHouseholdIdAsync(string householdId)
@@ -45,5 +53,11 @@ public class HouseholdMemberRepository(AppDbContext context)
         return Context.Set<HouseholdMember>()
             .Any(m => m.HouseholdId == householdId && m.UserId == userId);
     }
-}
 
+    public async Task<int> CountByHouseholdIdAsync(string householdId)
+    {
+        return await Context.Set<HouseholdMember>()
+            .AsNoTracking()
+            .CountAsync(m => m.HouseholdId == householdId);
+    }
+}

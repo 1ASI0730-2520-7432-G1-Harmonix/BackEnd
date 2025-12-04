@@ -22,4 +22,10 @@ public class HouseHoldQueryService(
     {
         return await houseHoldRepository.FindByRepresentativeIdAsync(query.RepresentativeId);
     }
+
+    public async Task<IEnumerable<HouseHold>> GetHouseHoldsByRepresentativeId(long representativeId)
+    {
+        var result = await houseHoldRepository.FindByRepresentativeIdAsync(representativeId);
+        return result.Where(h => h != null).Cast<HouseHold>();
+    }
 }

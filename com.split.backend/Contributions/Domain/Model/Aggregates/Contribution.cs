@@ -25,14 +25,18 @@ public partial class Contribution
     }
 
     public Contribution(string billId, string householdId,
-        string description, string deadlineForMembers, int strategy)
+        string description, string? deadlineForMembers, int? strategy)
     {
         this.Id = "CN" + DateTime.Now.ToString("yyyyMMddHHmmss");
         this.BillId = billId;
         this.HouseholdId = householdId;
-        this.Description = description;
-        this.DeadlineForMembers = DateTime.Parse(deadlineForMembers);
-        this.Strategy = (EStrategy)strategy;
+        this.Description = description ?? string.Empty;
+        this.DeadlineForMembers = !string.IsNullOrWhiteSpace(deadlineForMembers)
+            ? DateTime.Parse(deadlineForMembers)
+            : null;
+        this.Strategy = (strategy.HasValue && strategy.Value > 0)
+            ? (EStrategy)strategy.Value
+            : null;
     }
 
     public Contribution(CreateContributionCommand command)
@@ -40,9 +44,13 @@ public partial class Contribution
         this.Id = "CN" + DateTime.Now.ToString("yyyyMMddHHmmss");
         this.BillId = command.BillId;
         this.HouseholdId = command.HouseholdId;
-        this.Description = command.Description;
-        this.DeadlineForMembers = DateTime.Parse(command.DeadlineForMembers);
-        this.Strategy = (EStrategy)command.Strategy;
+        this.Description = command.Description ?? string.Empty;
+        this.DeadlineForMembers = !string.IsNullOrWhiteSpace(command.DeadlineForMembers)
+            ? DateTime.Parse(command.DeadlineForMembers)
+            : null;
+        this.Strategy = (command.Strategy.HasValue && command.Strategy.Value > 0)
+            ? (EStrategy)command.Strategy.Value
+            : null;
     }
 
     public Contribution Update(UpdateContributionCommand command)

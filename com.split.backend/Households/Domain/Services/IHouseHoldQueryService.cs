@@ -10,4 +10,6 @@ public interface IHouseHoldQueryService
     Task<IEnumerable<HouseHold?>> Handle(GetHouseHoldsByRepresentativeId query);
     
     Task<HouseHold?> Handle(GetHouseHoldByIdQuery query);
+
+    Task<IEnumerable<HouseHold>> GetHouseHoldsByRepresentativeId(long representativeId);
 }

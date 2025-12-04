@@ -9,6 +9,5 @@ public interface IUserQueryService
     
     Task<IEnumerable<User>> Handle(GetAllUsersQuery query);
 
-    Task<User?> Handle(GetUserByEmailQuery query);
     Task<User?> Handle(GetUserByMainHouseHoldId query);
 }

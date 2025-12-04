@@ -42,7 +42,7 @@ public class IncomeAllocationController(
     {
         var getIncomeAllocationsByUserIdQuery = new GetIncomeAllocationByUserIdQuery(userId);
         var incomeAllocations = await queryService.Handle(getIncomeAllocationsByUserIdQuery);
-        if(incomeAllocations == null) return NoContent();
+        if(incomeAllocations == null || !incomeAllocations.Any()) return NoContent();
         var incomeAllocationsResource =
             incomeAllocations.Select(IncomeAllocationResourceFromEntityAssembler.ToResourceFromEntity);
         
